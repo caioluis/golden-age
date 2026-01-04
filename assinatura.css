@@ -1,3 +1,6 @@
+.haruki-sign {
+    --haruki-primary: #3ab547;
+}
 .sig-link {
-    color: purple;
+    color: var(--haruki-primary);
 }
