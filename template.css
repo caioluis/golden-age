@@ -6,8 +6,7 @@
 
 /* --- STATUS (ISOLAMENTO TOTAL BLINDADO - V3.1) ---  achei o nome engraçado, luma, vou manter */
 .haruki-stats {
-  background: var(--dr-dark-grey);
-  border: 1px solid var(--dr-border);
+  border: 1px solid #371056;
   padding: 20px 30px;
   display: flex; flex-direction: column; gap: 20px; 
   position: relative; z-index: 2;
@@ -57,7 +56,7 @@
 /* Cores das Barras */
 .haruki .haruki-stats .jjk-dossier-status-bar-fill { height: 100%; border-radius: 0; border: none; margin: 0; display: block; }
 .haruki .haruki-stats .jjk-dossier-hp-fill { background: #5e2a2a !important; box-shadow: none !important; }
-.haruki .haruki-stats .jjk-dossier-ea-fill { background: var(--dr-blue-fade) !important; box-shadow: none !important; }
+.haruki .haruki-stats .jjk-dossier-ea-fill { background: rgb(6, 82, 132) !important; box-shadow: none !important; }
 
 /* Responsivo */
 @media (max-width: 600px) {
