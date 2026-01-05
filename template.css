@@ -1,3 +1,4 @@
 .haruki {
-    background: radial-gradient(circle at 50% 50%, rgba(31,10,41,1), rgba(13,13,13,1));
+    padding: 16px 128px 32px;
+    background: radial-gradient(circle at 50% 50%, rgba(31, 10, 41, 1), rgba(13, 13, 13, 1)), url(/👆/that/noise.svg);
 }

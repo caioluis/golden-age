@@ -8,6 +8,7 @@
     gap: 2px;
     background-color: #8067b7;
     border-bottom-left-radius: 8px;
+    height: 28px;
 }
 .sig-link, .sig-link:visited {
     text-decoration: none!important;
@@ -20,8 +21,4 @@
 
 .post-signature:has(.haruki-sign) {
     font-size: 0;
-}
-
-.post-content:has(.haruki-sign) > div:not(.post-signature) {
-    padding: 16px 25px;
 }
