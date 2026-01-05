@@ -9,8 +9,9 @@
     background-color: #8067b7;
     border-bottom-left-radius: 8px;
 }
-.sig-link {
-    text-decoration: none;
+.sig-link, .sig-link:visited {
+    text-decoration: none!important;
+    color: white;
 }
 
 .post:has(.haruki-sign) {
