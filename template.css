@@ -65,6 +65,10 @@
 }
 
 /* Considerações */
+:root {
+  interpolate-size: allow-keywords;
+}
+
 .haruki details {
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(255, 255, 255, 0.1);
@@ -111,28 +115,51 @@
   right: 1.5rem;
   transition: transform 0.3s ease;
   opacity: 0.7;
+  font-size: 0.75em;
 }
 
 .haruki details[open] summary::after {
   transform: rotate(-180deg);
 }
 
-/* Grid-based slide animation */
+/* Grid-based slide animation with smooth transitions */
 .haruki .accordion-content {
   display: grid;
   grid-template-rows: 0fr;
-  transition: grid-template-rows 0.3s ease;
+  transition: grid-template-rows 0.4s ease, opacity 0.4s ease;
+  opacity: 0;
 }
 
 .haruki details[open] .accordion-content {
   grid-template-rows: 1fr;
+  opacity: 1;
 }
 
 .haruki .accordion-content > div {
   overflow: hidden;
 }
 
+/* Content styling with smooth appearance */
 .haruki .accordion-content p {
   padding: 0 1.5rem 1.5rem;
   margin: 0;
+  transform: translateY(-10px);
+  transition: transform 0.4s ease 0.1s;
+}
+
+.haruki details[open] .accordion-content p {
+  transform: translateY(0);
+}
+
+/* Alternative using details-content (modern browsers) */
+.haruki details::details-content {
+  block-size: 0;
+  opacity: 0;
+  transition: block-size 0.4s ease, opacity 0.4s ease, content-visibility 0.4s allow-discrete;
+  transition-behavior: allow-discrete;
+}
+
+.haruki details[open]::details-content {
+  block-size: auto;
+  opacity: 1;
 }
