@@ -25,7 +25,7 @@
 }
 
 .post-content:has(.haruki) > div:not(.post-signature) {
-    padding: 48px 128px;
+    padding: 48px 128px!important;
 }
 
 /* --- STATUS (ISOLAMENTO TOTAL BLINDADO - V3.1) ---  achei o nome engraçado, luma, vou manter */
