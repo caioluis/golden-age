@@ -1,5 +1,5 @@
 .haruki {
-    padding: 16px 128px 32px;
+    padding: 48px 128px;
     background: radial-gradient(circle at 50% 50%, rgba(31, 10, 41, 1), rgba(13, 13, 13, 1)), url(/👆/that/noise.svg);
     border: 2px solid #371056;
 }
@@ -62,4 +62,77 @@
 @media (max-width: 600px) {
   .haruki-stats { padding: 15px; }
   .haruki .haruki-stats .jjk-dossier-status-item { grid-template-columns: 40px 1fr 65px !important; gap: 10px; }
+}
+
+/* Considerações */
+.haruki details {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  margin: 1rem 0;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.haruki details:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.haruki details[open] {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.25);
+}
+
+/* Summary Styling */
+.haruki summary {
+  padding: 1rem 1.5rem;
+  cursor: pointer;
+  font-weight: 600;
+  list-style: none;
+  position: relative;
+  user-select: none;
+  transition: all 0.3s ease;
+}
+
+.haruki summary:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+/* Remove default marker */
+.haruki summary::-webkit-details-marker {
+  display: none;
+}
+
+/* Custom arrow indicator */
+.haruki summary::after {
+  content: "▼";
+  position: absolute;
+  right: 1.5rem;
+  transition: transform 0.3s ease;
+  opacity: 0.7;
+}
+
+.haruki details[open] summary::after {
+  transform: rotate(-180deg);
+}
+
+/* Grid-based slide animation */
+.haruki .accordion-content {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.3s ease;
+}
+
+.haruki details[open] .accordion-content {
+  grid-template-rows: 1fr;
+}
+
+.haruki .accordion-content > div {
+  overflow: hidden;
+}
+
+.haruki .accordion-content p {
+  padding: 0 1.5rem 1.5rem;
+  margin: 0;
 }
