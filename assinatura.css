@@ -27,10 +27,6 @@
     font-size: 0;
 }
 
-.post-content:has(.haruki-sign):not(:has(.haruki)) {
-    padding: 16px 25px;
-}
-
 .haruki-sign .links {
     display: flex;
     align-items: center;
