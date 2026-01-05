@@ -1,6 +1,26 @@
 .haruki-sign {
-    --haruki-primary: #3ab547;
+    position: absolute;
+    bottom: 0;
+    font-size: 16px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    gap: 2px;
+    background-color: #8067b7;
+    border-bottom-left-radius: 8px;
 }
 .sig-link {
-    color: var(--haruki-primary);
+    text-decoration: none;
+}
+
+.post:has(.haruki-sign) {
+    padding: 0;
+}
+
+.post-signature:has(.haruki-sign) {
+    font-size: 0;
+}
+
+.post-content:has(.haruki-sign) > div:not(.post-signature) {
+    padding: 16px 25px;
 }
