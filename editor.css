@@ -1,0 +1,312 @@
+/* Editor Container */
+.editor-container {
+    max-width: 900px;
+    margin: 40px auto;
+    padding: 48px 32px;
+    background: radial-gradient(circle at 50% 50%, rgba(31, 10, 41, 1), rgba(13, 13, 13, 1));
+    border: 2px solid #371056;
+    border-radius: 8px;
+    position: relative;
+}
+
+/* Header */
+.editor-header {
+    text-align: center;
+    margin-bottom: 32px;
+    position: relative;
+}
+
+.editor-header h1 {
+    font-family: 'Cinzel', serif;
+    color: #bc81e9;
+    font-size: 28px;
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+.auto-save-indicator {
+    position: absolute;
+    top: 0;
+    right: 0;
+    font-size: 12px;
+    color: #666;
+    font-style: italic;
+    font-family: 'Inter', sans-serif;
+}
+
+.auto-save-indicator.saving {
+    color: #bc81e9;
+}
+
+/* Form Sections */
+.editor-section {
+    margin-bottom: 32px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid rgba(55, 16, 86, 0.5);
+}
+
+.editor-section:last-of-type {
+    border-bottom: none;
+}
+
+.section-title {
+    font-family: 'Cinzel', serif;
+    color: #bc81e9;
+    font-size: 18px;
+    margin: 0 0 16px 0;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* Labels */
+.editor-label {
+    display: block;
+    font-family: 'Cinzel', serif;
+    color: hsl(273 69% 70% / 1);
+    font-size: 14px;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* Input Fields */
+.editor-input {
+    width: 100%;
+    padding: 12px 16px;
+    background: rgba(13, 13, 13, 0.6);
+    border: 1px solid #371056;
+    border-radius: 4px;
+    color: #bc81e9;
+    font-family: 'Inter', sans-serif;
+    font-size: 16px;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    box-sizing: border-box;
+}
+
+.editor-input:focus {
+    outline: none;
+    border-color: hsl(273 69% 70% / 1);
+    box-shadow: 0 0 0 2px rgba(188, 129, 233, 0.1);
+}
+
+.editor-input::placeholder {
+    color: rgba(188, 129, 233, 0.4);
+}
+
+/* Textarea */
+.editor-textarea {
+    min-height: 300px;
+    resize: vertical;
+    font-family: 'Inter', sans-serif;
+    line-height: 1.6;
+}
+
+/* Text Controls */
+.text-controls {
+    display: flex;
+    gap: 12px;
+    margin-top: 12px;
+    flex-wrap: wrap;
+}
+
+.text-control-button {
+    padding: 8px 16px;
+    font-size: 14px;
+}
+
+.editor-hint {
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    color: #888;
+    font-style: italic;
+    margin: 8px 0 0 0;
+}
+
+/* Status Input Groups */
+.status-input-group {
+    margin-bottom: 16px;
+}
+
+.status-input-group:last-child {
+    margin-bottom: 0;
+}
+
+.status-inputs {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 8px;
+}
+
+.status-input {
+    width: 80px;
+    flex-shrink: 0;
+}
+
+.input-separator,
+.input-suffix {
+    color: #bc81e9;
+    font-family: 'Inter', sans-serif;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+/* Metadata Grid */
+.metadata-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+}
+
+.metadata-item {
+    display: flex;
+    flex-direction: column;
+}
+
+.metadata-item.full-width {
+    grid-column: 1 / -1;
+}
+
+/* Buttons */
+.editor-button {
+    padding: 12px 24px;
+    background: linear-gradient(135deg, #371056 0%, #5a1a7d 100%);
+    border: 1px solid #bc81e9;
+    border-radius: 4px;
+    color: #bc81e9;
+    font-family: 'Cinzel', serif;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.editor-button:hover {
+    background: linear-gradient(135deg, #5a1a7d 0%, #7d2ca8 100%);
+    box-shadow: 0 4px 12px rgba(188, 129, 233, 0.3);
+    transform: translateY(-2px);
+}
+
+.editor-button:active {
+    transform: translateY(0);
+}
+
+.editor-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* Primary Button */
+.editor-button-primary {
+    background: linear-gradient(135deg, #5a1a7d 0%, #bc81e9 100%);
+    color: white;
+    font-size: 16px;
+    padding: 16px 32px;
+}
+
+.editor-button-primary:hover {
+    background: linear-gradient(135deg, #7d2ca8 0%, #d9a5f7 100%);
+}
+
+/* Secondary Button */
+.editor-button-secondary {
+    background: linear-gradient(135deg, #2a0d36 0%, #371056 100%);
+    border-color: #5a1a7d;
+}
+
+.editor-button-secondary:hover {
+    background: linear-gradient(135deg, #371056 0%, #5a1a7d 100%);
+}
+
+/* Action Buttons */
+.editor-actions {
+    display: flex;
+    gap: 16px;
+    margin-top: 32px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+/* Status Message */
+.status-message {
+    padding: 12px 16px;
+    border-radius: 4px;
+    margin-top: 16px;
+    text-align: center;
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+}
+
+.status-success {
+    background: rgba(6, 132, 82, 0.2);
+    border: 1px solid rgb(6, 132, 82);
+    color: rgb(134, 239, 172);
+}
+
+.status-error {
+    background: rgba(132, 42, 42, 0.2);
+    border: 1px solid rgb(132, 42, 42);
+    color: rgb(252, 165, 165);
+}
+
+.status-warning {
+    background: rgba(180, 83, 9, 0.2);
+    border: 1px solid rgb(180, 83, 9);
+    color: rgb(253, 186, 116);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .editor-container {
+        padding: 24px 16px;
+        margin: 20px 10px;
+    }
+
+    .editor-header h1 {
+        font-size: 22px;
+    }
+
+    .auto-save-indicator {
+        position: static;
+        display: block;
+        margin-top: 8px;
+    }
+
+    .text-controls {
+        flex-direction: column;
+    }
+
+    .editor-button,
+    .text-control-button {
+        width: 100%;
+    }
+
+    .status-inputs {
+        flex-wrap: wrap;
+    }
+
+    .metadata-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .editor-actions {
+        flex-direction: column;
+    }
+
+    .editor-actions .editor-button {
+        width: 100%;
+    }
+}
+
+/* Dark Theme Body */
+body {
+    background: #0d0d0d;
+    color: #bc81e9;
+    font-family: 'Inter', sans-serif;
+    margin: 0;
+    padding: 0;
+}
