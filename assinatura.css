@@ -37,5 +37,6 @@
     position: absolute;
     left: 10px;
     font-style: italic;
+    text-transform: uppercase;
 }
 
