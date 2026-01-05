@@ -6,9 +6,9 @@
     display: flex;
     justify-content: center;
     gap: 2px;
-    background-color: #8067b7;
+    background-color: #371056;
     border-bottom-left-radius: 8px;
-    height: 28px;
+    height: 32px;
 }
 .sig-link, .sig-link:visited {
     text-decoration: none!important;
@@ -17,6 +17,7 @@
 
 .post:has(.haruki-sign) {
     padding: 0;
+    border-bottom-left-radius: 8px;
 }
 
 .post-signature:has(.haruki-sign) {

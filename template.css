@@ -1,4 +1,66 @@
 .haruki {
     padding: 16px 128px 32px;
     background: radial-gradient(circle at 50% 50%, rgba(31, 10, 41, 1), rgba(13, 13, 13, 1)), url(/👆/that/noise.svg);
+    border: 2px solid #371056;
+}
+
+/* --- STATUS (ISOLAMENTO TOTAL BLINDADO - V3.1) ---  achei o nome engraçado, luma, vou manter */
+.haruki-stats {
+  background: var(--dr-dark-grey);
+  border: 1px solid var(--dr-border);
+  padding: 20px 30px;
+  display: flex; flex-direction: column; gap: 20px; 
+  position: relative; z-index: 2;
+}
+
+/* Grid Específico e Isolado - Adicionado seletor pai .haruki-stats */
+.haruki .haruki-stats .jjk-dossier-status-item {
+  display: grid !important; 
+  grid-template-columns: 40px 1fr 70px !important; /* Coluna fixa para números */
+  align-items: center; gap: 20px;
+  border: none; background: transparent; margin: 0; padding: 0; 
+  min-height: 0; width: 100%;
+}
+
+/* Labels */
+.haruki .haruki-stats .jjk-dossier-status-label { 
+  font-family: 'Cinzel', serif; font-size: 0.8em; 
+  color: var(--dr-blue-fade) !important; 
+  text-align: right; letter-spacing: 1px;
+  background: transparent; border: none; margin: 0; padding: 0;
+  line-height: normal;
+}
+
+/* Valores Numéricos */
+.haruki .haruki-stats .jjk-dossier-status-value { 
+  font-family: 'Inter', sans-serif; font-size: 0.85em; 
+  color: #888 !important; 
+  text-align: right; font-weight: 300;
+  white-space: nowrap; 
+  background: transparent; border: none; margin: 0; padding: 0;
+  line-height: normal;
+}
+
+/* Barras Wrapper */
+.haruki .haruki-stats .jjk-dossier-status-bar-wrapper {
+  width: 100%; height: 4px; 
+  background: #151515 !important;
+  border-radius: 0; overflow: hidden; border: none; margin: 0; padding: 0;
+  box-shadow: none;
+}
+
+/* Barras Internas */
+.haruki .haruki-stats .jjk-dossier-status-bar { 
+  width: 100%; height: 100%; background: transparent; border: none; margin: 0; padding: 0; display: block;
+}
+
+/* Cores das Barras */
+.haruki .haruki-stats .jjk-dossier-status-bar-fill { height: 100%; border-radius: 0; border: none; margin: 0; display: block; }
+.haruki .haruki-stats .jjk-dossier-hp-fill { background: #5e2a2a !important; box-shadow: none !important; }
+.haruki .haruki-stats .jjk-dossier-ea-fill { background: var(--dr-blue-fade) !important; box-shadow: none !important; }
+
+/* Responsivo */
+@media (max-width: 600px) {
+  .haruki-stats { padding: 15px; }
+  .haruki .haruki-stats .jjk-dossier-status-item { grid-template-columns: 40px 1fr 65px !important; gap: 10px; }
 }
