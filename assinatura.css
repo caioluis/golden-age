@@ -9,10 +9,13 @@
     background-color: #371056;
     border-bottom-left-radius: 8px;
     height: 32px;
+    align-items: center;
 }
 .sig-link, .sig-link:visited {
     text-decoration: none!important;
     color: white;
+    display: flex;
+    align-items: center;
 }
 
 .post:has(.haruki-sign) {
@@ -23,3 +26,16 @@
 .post-signature:has(.haruki-sign) {
     font-size: 0;
 }
+
+.haruki-sign .links {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.haruki-sign p {
+    position: absolute;
+    left: 10px;
+    font-style: italic;
+}
+
