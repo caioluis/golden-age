@@ -131,10 +131,11 @@ class HTMLGenerator {
         this.template = `<link href="https://caioluis.github.io/golden-age/template.css" rel="stylesheet" type="text/css"><div class="haruki"><h2>{{TITLE}}</h2><h3>{{SUBTITLE}}</h3><hr/>
 {{NARRATIVE}}
 
-<div class="haruki-stats"> <div class="jjk-dossier-status-item"> <span class="jjk-dossier-status-label">HP</span> <div class="jjk-dossier-status-bar-wrapper"> <div class="jjk-dossier-status-bar"><div class="jjk-dossier-status-bar-fill jjk-dossier-hp-fill" style="width: {{HP_PERCENT}}%;"></div></div> </div> <span class="jjk-dossier-status-value">{{HP_CURRENT}} / {{HP_MAX}}</span> </div> <div class="jjk-dossier-status-item"> <span class="jjk-dossier-status-label">EA</span> <div class="jjk-dossier-status-bar-wrapper"> <div class="jjk-dossier-status-bar"><div class="jjk-dossier-status-bar-fill jjk-dossier-ea-fill" style="width: {{EA_PERCENT}}%;"></div></div> </div> <span class="jjk-dossier-status-value">{{EA_CURRENT}} / {{EA_MAX}}</span> </div> </div><details><summary>Considerações</summary><div class="accordion-content"><div><p>Palavras: {{WORD_COUNT}}
+<div class="haruki-stats"> <div class="jjk-dossier-status-item"> <span class="jjk-dossier-status-label">HP</span> <div class="jjk-dossier-status-bar-wrapper"> <div class="jjk-dossier-status-bar"><div class="jjk-dossier-status-bar-fill jjk-dossier-hp-fill" style="width: {{HP_PERCENT}}%;"></div></div> </div> <span class="jjk-dossier-status-value">{{HP_CURRENT}} / {{HP_MAX}}</span> </div> <div class="jjk-dossier-status-item"> <span class="jjk-dossier-status-label">EA</span> <div class="jjk-dossier-status-bar-wrapper"> <div class="jjk-dossier-status-bar"><div class="jjk-dossier-status-bar-fill jjk-dossier-ea-fill" style="width: {{EA_PERCENT}}%;"></div></div> </div> <span class="jjk-dossier-status-value">{{EA_CURRENT}} / {{EA_MAX}}</span> </div> <div class="jjk-dossier-status-item"> <span class="jjk-dossier-status-label">SAN</span> <div class="jjk-dossier-status-bar-wrapper"> <div class="jjk-dossier-status-bar"><div class="jjk-dossier-status-bar-fill" style="width: {{SAN_PERCENT}}%; background-color: #d3d3d3;"></div></div> </div> <span class="jjk-dossier-status-value">{{SAN_CURRENT}} / {{SAN_MAX}}</span> </div> </div><details><summary>Considerações</summary><div class="accordion-content"><div><p>Palavras: {{WORD_COUNT}}
 Post: {{POST_CURRENT}}/{{POST_MAX}}
 Objetivo: {{OBJETIVO}}
 Obs.: {{OBS}}
+Aptidões Usadas: {{APTIDOES}}
 </p></div></div></details>
 </div>`;
     }
@@ -151,11 +152,15 @@ Obs.: {{OBS}}
             .replace('{{EA_PERCENT}}', formData.eaPercent || '100')
             .replace('{{EA_CURRENT}}', formData.eaCurrent)
             .replace('{{EA_MAX}}', formData.eaMax)
+            .replace('{{SAN_PERCENT}}', formData.sanPercent || '100')
+            .replace('{{SAN_CURRENT}}', formData.sanCurrent)
+            .replace('{{SAN_MAX}}', formData.sanMax)
             .replace('{{WORD_COUNT}}', formData.wordCount)
             .replace('{{POST_CURRENT}}', formData.postCurrent)
             .replace('{{POST_MAX}}', formData.postMax)
             .replace('{{OBJETIVO}}', formData.objetivo)
-            .replace('{{OBS}}', formData.obs);
+            .replace('{{OBS}}', formData.obs)
+            .replace('{{APTIDOES}}', formData.aptidoes);
 
         return html;
     }
@@ -214,6 +219,17 @@ class FormValidator {
         }
         if (!this.isValidNumber(formData.eaPercent)) {
             errors.push('EA Percent must be a number');
+        }
+
+        // SAN validation
+        if (!this.isValidNumber(formData.sanCurrent)) {
+            errors.push('SAN Current must be a number');
+        }
+        if (!this.isValidNumber(formData.sanMax)) {
+            errors.push('SAN Max must be a number');
+        }
+        if (!this.isValidNumber(formData.sanPercent)) {
+            errors.push('SAN Percent must be a number');
         }
 
         // Word count validation
@@ -281,11 +297,15 @@ function getFormData() {
         eaCurrent: document.getElementById('eaCurrent').value,
         eaMax: document.getElementById('eaMax').value,
         eaPercent: document.getElementById('eaPercent').value,
+        sanCurrent: document.getElementById('sanCurrent').value,
+        sanMax: document.getElementById('sanMax').value,
+        sanPercent: document.getElementById('sanPercent').value,
         wordCount: document.getElementById('wordCount').value,
         postCurrent: document.getElementById('postCurrent').value,
         postMax: document.getElementById('postMax').value,
         objetivo: document.getElementById('objetivo').value,
-        obs: document.getElementById('obs').value
+        obs: document.getElementById('obs').value,
+        aptidoes: document.getElementById('aptidoes').value
     };
 }
 
@@ -301,11 +321,15 @@ function setFormData(data) {
     document.getElementById('eaCurrent').value = data.eaCurrent || '';
     document.getElementById('eaMax').value = data.eaMax || '';
     document.getElementById('eaPercent').value = data.eaPercent || '';
+    document.getElementById('sanCurrent').value = data.sanCurrent || '';
+    document.getElementById('sanMax').value = data.sanMax || '';
+    document.getElementById('sanPercent').value = data.sanPercent || '';
     document.getElementById('wordCount').value = data.wordCount || '';
     document.getElementById('postCurrent').value = data.postCurrent || '';
     document.getElementById('postMax').value = data.postMax || '';
     document.getElementById('objetivo').value = data.objetivo || '';
     document.getElementById('obs').value = data.obs || '';
+    document.getElementById('aptidoes').value = data.aptidoes || '';
 }
 
 function clearAllFields() {

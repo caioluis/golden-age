@@ -67,6 +67,18 @@
                         <span class="input-suffix">%</span>
                     </div>
                 </div>
+
+                <div class="status-input-group">
+                    <label class="editor-label">SAN</label>
+                    <div class="status-inputs">
+                        <input type="number" id="sanCurrent" class="editor-input status-input" placeholder="Current" min="0">
+                        <span class="input-separator">/</span>
+                        <input type="number" id="sanMax" class="editor-input status-input" placeholder="Max" min="0">
+                        <span class="input-separator">@</span>
+                        <input type="number" id="sanPercent" class="editor-input status-input" placeholder="%" min="0" max="100">
+                        <span class="input-suffix">%</span>
+                    </div>
+                </div>
             </div>
 
             <!-- Metadata Section -->
@@ -97,6 +109,11 @@
                     <div class="metadata-item full-width">
                         <label for="obs" class="editor-label">Obs.</label>
                         <textarea id="obs" class="editor-input" placeholder="Enter observations..." rows="3"></textarea>
+                    </div>
+
+                    <div class="metadata-item full-width">
+                        <label for="aptidoes" class="editor-label">Aptidões Usadas</label>
+                        <textarea id="aptidoes" class="editor-input" placeholder="Enter aptitudes used..." rows="3"></textarea>
                     </div>
                 </div>
             </div>
