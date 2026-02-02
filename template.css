@@ -84,6 +84,81 @@
   .haruki .haruki-stats .jjk-dossier-status-item { grid-template-columns: 40px 1fr 65px !important; gap: 10px; }
 }
 
+/* Counters Section (Combat Actions, Palavras, Turno) */
+.haruki-counter-section {
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  row-gap: 20px;
+  margin: 25px 0;
+  padding: 20px;
+  flex-wrap: wrap;
+}
+
+.haruki-counter-item {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.haruki-counter-value {
+  font-family: 'Times New Roman', serif;
+  font-size: 2.5em;
+  font-weight: bold;
+  color: #ffffff;
+  line-height: 1;
+  letter-spacing: 1px;
+}
+
+.haruki-counter-label {
+  font-family: 'Times New Roman', serif;
+  font-size: 0.9em;
+  font-weight: 400;
+  color: #d3d3d3;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  max-width: 120px;
+}
+
+@media (min-width:961px) and (max-width:1280px) {
+  .haruki-counter-value {
+    font-size: 1.6em;
+  }
+  .haruki-counter-label {
+    font-size: 0.65em;
+  }
+
+  .haruki {
+    padding: 36px 64px;
+  }
+}
+
+@media (min-width:840px) and (max-width: 960px) {
+  .haruki-counter-section {
+    gap: 25px;
+    padding: 15px;
+  }
+  .haruki-counter-value {
+    font-size: 2em;
+  }
+  .haruki-counter-label {
+    font-size: 0.75em;
+  }
+}
+
+@media (max-width: 840px) {
+  .haruki-counter-value {
+    font-size: 1.5em;
+  }
+  .haruki-counter-label {
+    font-size: 0.6em;
+  }
+  .haruki {
+    padding: 18px 48px;
+  }
+}
+
 /* Falas e pensamentos */
 .haruki-speaks {
     color: hsl(276 70% 72% / 1);
@@ -151,6 +226,7 @@
   grid-template-rows: 0fr;
   transition: grid-template-rows 0.4s ease, opacity 0.4s ease;
   opacity: 0;
+  padding: 0 40px;
 }
 
 .haruki details[open] .accordion-content {
@@ -185,4 +261,8 @@
 .haruki details[open]::details-content {
   block-size: auto;
   opacity: 1;
+}
+
+.haruki details[open] .accordion-content .spoiler {
+  padding: 10px;
 }

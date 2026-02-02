@@ -81,6 +81,49 @@
                 </div>
             </div>
 
+            <!-- Combat Actions Section -->
+            <div class="editor-section">
+                <h3 class="section-title">Ações em Combate</h3>
+
+                <div class="status-groups-wrapper">
+                    <div class="status-input-group">
+                        <label class="editor-label">Ações Ofensivas</label>
+                        <div class="status-inputs">
+                            <input type="number" id="acoesOfensivasCurrent" class="editor-input status-input" placeholder="0" min="0" max="3" value="0">
+                            <span class="input-separator">/</span>
+                            <input type="number" id="acoesOfensivasMax" class="editor-input status-input" placeholder="3" min="0" value="3">
+                        </div>
+                    </div>
+    
+                    <div class="status-input-group">
+                        <label class="editor-label">Ações Defensivas</label>
+                        <div class="status-inputs">
+                            <input type="number" id="acoesDefensivasCurrent" class="editor-input status-input" placeholder="0" min="0" max="3" value="0">
+                            <span class="input-separator">/</span>
+                            <input type="number" id="acoesDefensivasMax" class="editor-input status-input" placeholder="3" min="0" value="3">
+                        </div>
+                    </div>
+    
+                    <div class="status-input-group">
+                        <label class="editor-label">Ações de Suporte</label>
+                        <div class="status-inputs">
+                            <input type="number" id="acoesSuporteCurrent" class="editor-input status-input" placeholder="0" min="0" max="2" value="0">
+                            <span class="input-separator">/</span>
+                            <input type="number" id="acoesSuporteMax" class="editor-input status-input" placeholder="2" min="0" value="2">
+                        </div>
+                    </div>
+    
+                    <div class="status-input-group">
+                        <label class="editor-label">Ação Livre</label>
+                        <div class="status-inputs">
+                            <input type="number" id="acaoLivreCurrent" class="editor-input status-input" placeholder="0" min="0" max="1" value="0">
+                            <span class="input-separator">/</span>
+                            <input type="number" id="acaoLivreMax" class="editor-input status-input" placeholder="1" min="0" value="1">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <!-- Metadata Section -->
             <div class="editor-section">
                 <h3 class="section-title">Metadata</h3>
@@ -92,18 +135,23 @@
                     </div>
 
                     <div class="metadata-item">
-                        <label for="postCurrent" class="editor-label">Post Current</label>
+                        <label for="postCurrent" class="editor-label">Turno Current</label>
                         <input type="text" id="postCurrent" class="editor-input" placeholder="1">
                     </div>
 
                     <div class="metadata-item">
-                        <label for="postMax" class="editor-label">Post Max</label>
+                        <label for="postMax" class="editor-label">Turno Max</label>
                         <input type="text" id="postMax" class="editor-input" placeholder="1 or ??">
                     </div>
 
                     <div class="metadata-item full-width">
                         <label for="objetivo" class="editor-label">Objetivo</label>
                         <input type="text" id="objetivo" class="editor-input" placeholder="Enter objective...">
+                    </div>
+
+                    <div class="metadata-item full-width">
+                        <label for="principaisAcoes" class="editor-label">Principais ações no turno</label>
+                        <textarea id="principaisAcoes" class="editor-input" placeholder="Enter main actions in the turn..." rows="3"></textarea>
                     </div>
 
                     <div class="metadata-item full-width">

@@ -302,6 +302,12 @@
     }
 }
 
+.status-groups-wrapper {
+    display: flex;
+    flex-direction: row;
+    gap: 16px;
+}
+
 /* Dark Theme Body */
 body {
     background: #0d0d0d;
