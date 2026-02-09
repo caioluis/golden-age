@@ -266,3 +266,68 @@
 .haruki details[open] .accordion-content .spoiler {
   padding: 10px;
 }
+
+/* Nested details (Carregando, Bonificações, Técnicas) */
+.haruki details details {
+  margin: 0.5rem 16px;
+  border: 1px solid #371056;
+  border-radius: 4px;
+  padding: 0;
+}
+
+.haruki details details > summary {
+  cursor: pointer;
+  list-style: none;
+  padding: 0.5rem 0.75rem;
+  position: relative;
+}
+
+.haruki details details > summary::-webkit-details-marker {
+  display: none;
+}
+
+.haruki details details > summary::marker {
+  content: "";
+}
+
+.haruki details details > summary::after {
+  display: none;
+}
+
+.haruki details details > summary::before {
+  content: "▶";
+  display: inline-block;
+  margin-right: 0.5rem;
+  font-size: 0.65em;
+  transition: transform 150ms;
+}
+
+.haruki details details[open] > summary::before {
+  transform: rotate(90deg);
+}
+
+/* Carry items (Carregando consigo) */
+.haruki-carry-item {
+  display: flex;
+  gap: 10px;
+  border: 1px solid #371056;
+  border-radius: 4px;
+  padding: 10px;
+  margin-bottom: 8px;
+  font-size: 0.85em;
+  line-height: 1.4;
+}
+
+.haruki-carry-img {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  border: 1px solid #371056;
+  border-radius: 3px;
+  flex-shrink: 0;
+}
+
+.haruki-carry-info {
+  flex: 1;
+  min-width: 0;
+}

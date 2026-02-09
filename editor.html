@@ -8,6 +8,7 @@
     <link href="editor.css" rel="stylesheet" type="text/css">
 </head>
 <body>
+    <div class="editor-layout">
     <div class="editor-container">
         <div class="editor-header">
             <h1>Golden Age Post Editor</h1>
@@ -163,6 +164,21 @@
                         <label for="aptidoes" class="editor-label">Aptidões Usadas</label>
                         <textarea id="aptidoes" class="editor-input" placeholder="Enter aptitudes used..." rows="3"></textarea>
                     </div>
+
+                    <div class="metadata-item full-width">
+                        <label for="modificadores" class="editor-label">Modificadores</label>
+                        <input type="text" id="modificadores" class="editor-input" placeholder="Ex: +300% da Era Dourada + 10% da Tag do Discord">
+                    </div>
+
+                    <div class="metadata-item full-width">
+                        <label for="bonificacoes" class="editor-label">Bonificações de status</label>
+                        <textarea id="bonificacoes" class="editor-input" placeholder="Enter status bonuses..." rows="3"></textarea>
+                    </div>
+
+                    <div class="metadata-item full-width">
+                        <label for="tecnicas" class="editor-label">Técnicas Usadas</label>
+                        <textarea id="tecnicas" class="editor-input" placeholder="Enter techniques used..." rows="4"></textarea>
+                    </div>
                 </div>
             </div>
 
@@ -176,6 +192,17 @@
             <div id="statusMessage" class="status-message" style="display: none;"></div>
         </form>
     </div>
+
+    <!-- Equipment Panel -->
+    <div class="equipment-panel" id="equipmentPanel">
+        <div class="equipment-header">
+            <h2>Inventário</h2>
+        </div>
+        <textarea id="htmlPasteArea" class="editor-input eq-paste-area" placeholder="Paste your secundary.html code here..."></textarea>
+        <button type="button" id="btnParseHtml" class="editor-button equipment-load-btn">Parse Inventory</button>
+        <div id="equipmentList" class="equipment-list"></div>
+    </div>
+    </div><!-- end editor-layout -->
 
     <script src="editor.js"></script>
 </body>

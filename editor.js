@@ -137,7 +137,12 @@ class HTMLGenerator {
 [b]Principais ações no turno:[/b] {{PRINCIPAIS_ACOES}}
 [b]Obs.:[/b] {{OBS}}
 [b]Aptidões Usadas:[/b] {{APTIDOES}}
-</p></div></div></details>
+[b]Modificadores:[/b] {{MODIFICADORES}}
+</p></div></div>
+<details><summary>Carregando consigo</summary><div class="accordion-content"><div>{{CARREGANDO}}</div></div></details>
+<details><summary>Bonificações de status</summary><div class="accordion-content"><div><p>{{BONIFICACOES}}</p></div></div></details>
+<details><summary>Técnicas Usadas</summary><div class="accordion-content"><div><p>{{TECNICAS}}</p></div></div></details>
+</details>
 </div>`;
     }
 
@@ -176,7 +181,11 @@ class HTMLGenerator {
             .replace("{{OBJETIVO}}", formData.objetivo)
             .replace("{{PRINCIPAIS_ACOES}}", formData.principaisAcoes)
             .replace("{{OBS}}", formData.obs)
-            .replace("{{APTIDOES}}", formData.aptidoes);
+            .replace("{{APTIDOES}}", formData.aptidoes)
+            .replace("{{MODIFICADORES}}", formData.modificadores)
+            .replace("{{CARREGANDO}}", formData.carregando)
+            .replace("{{BONIFICACOES}}", formData.bonificacoes)
+            .replace("{{TECNICAS}}", formData.tecnicas);
 
         return html;
     }
@@ -336,6 +345,12 @@ function getFormData() {
         principaisAcoes: document.getElementById("principaisAcoes").value,
         obs: document.getElementById("obs").value,
         aptidoes: document.getElementById("aptidoes").value,
+        modificadores: document.getElementById("modificadores").value,
+        bonificacoes: document.getElementById("bonificacoes").value,
+        tecnicas: document.getElementById("tecnicas").value,
+        carregando: buildCarregandoText(),
+        parsedItems: parsedItems,
+        selectedEquipment: selectedEquipment,
     };
 }
 
@@ -376,6 +391,17 @@ function setFormData(data) {
     document.getElementById("principaisAcoes").value = data.principaisAcoes || "";
     document.getElementById("obs").value = data.obs || "";
     document.getElementById("aptidoes").value = data.aptidoes || "";
+    document.getElementById("modificadores").value = data.modificadores || "";
+    document.getElementById("bonificacoes").value = data.bonificacoes || "";
+    document.getElementById("tecnicas").value = data.tecnicas || "";
+
+    // Restore equipment selections
+    if (data.selectedEquipment) {
+        selectedEquipment = data.selectedEquipment;
+    }
+    if (data.parsedItems && data.parsedItems.length > 0) {
+        renderEquipmentList(data.parsedItems);
+    }
 }
 
 function clearAllFields() {
@@ -388,6 +414,115 @@ function clearAllFields() {
         storageManager.clear();
         showStatusMessage("All fields cleared", "success");
     }
+}
+
+// ============================================================================
+// Equipment Manager - Parses secundary.html and manages selections
+// ============================================================================
+
+let selectedEquipment = {}; // { index: { selected: bool, note: string } }
+let parsedItems = [];
+
+function parseSecundaryHTML(htmlString) {
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(htmlString, "text/html");
+    const items = [];
+
+    doc.querySelectorAll(".i-c").forEach((card) => {
+        const name = card.querySelector(".i-n")?.textContent?.trim() || "";
+        const type = card.querySelector(".i-tp")?.textContent?.trim() || "";
+        const img = card.querySelector(".i-m")?.getAttribute("src") || "";
+        const statsEl = card.querySelector(".i-st");
+        const desc = card.querySelector(".i-d")?.textContent?.trim() || "";
+        const effectEl = card.querySelector(".i-ef");
+
+        // Parse stats text
+        let stats = "";
+        if (statsEl) {
+            stats = statsEl.textContent.replace(/\s+/g, " ").trim();
+        }
+
+        // Parse effect - get text content after "Efeito:"
+        let effect = "";
+        if (effectEl) {
+            effect = effectEl.textContent.replace(/^Efeito:\s*/, "").trim();
+        }
+
+        if (name) {
+            items.push({ name, type, img, stats, desc, effect });
+        }
+    });
+
+    return items;
+}
+
+function renderEquipmentList(items) {
+    parsedItems = items;
+    const list = document.getElementById("equipmentList");
+    list.innerHTML = "";
+
+    items.forEach((item, index) => {
+        const sel = selectedEquipment[index] || { selected: false, note: "" };
+
+        const card = document.createElement("div");
+        card.className = "eq-card" + (sel.selected ? " eq-selected" : "");
+
+        card.innerHTML = `
+            <label class="eq-check-label">
+                <input type="checkbox" class="eq-check" data-index="${index}" ${sel.selected ? "checked" : ""}>
+                <span class="eq-name">${item.name}</span>
+                ${item.type ? `<span class="eq-type">${item.type}</span>` : ""}
+            </label>
+            <input type="text" class="eq-note editor-input" data-index="${index}" placeholder="Ex: na mochila, empunhada..." value="${sel.note || ""}">
+        `;
+
+        list.appendChild(card);
+    });
+
+    // Bind events
+    list.querySelectorAll(".eq-check").forEach((cb) => {
+        cb.addEventListener("change", (e) => {
+            const idx = e.target.dataset.index;
+            if (!selectedEquipment[idx]) selectedEquipment[idx] = { selected: false, note: "" };
+            selectedEquipment[idx].selected = e.target.checked;
+            e.target.closest(".eq-card").classList.toggle("eq-selected", e.target.checked);
+            storageManager.scheduleSave(getFormData());
+        });
+    });
+
+    list.querySelectorAll(".eq-note").forEach((input) => {
+        input.addEventListener("input", (e) => {
+            const idx = e.target.dataset.index;
+            if (!selectedEquipment[idx]) selectedEquipment[idx] = { selected: false, note: "" };
+            selectedEquipment[idx].note = e.target.value;
+            storageManager.scheduleSave(getFormData());
+        });
+    });
+}
+
+function buildCarregandoText() {
+    const items = [];
+
+    parsedItems.forEach((item, index) => {
+        const sel = selectedEquipment[index];
+        if (!sel || !sel.selected) return;
+
+        const note = sel.note ? ` (${sel.note})` : "";
+        let html = `<div class="haruki-carry-item">`;
+        if (item.img && !item.img.includes("placeholder")) {
+            html += `<img src="${item.img}" class="haruki-carry-img">`;
+        }
+        html += `<div class="haruki-carry-info">`;
+        html += `<strong>${item.name}${note}</strong>`;
+        if (item.type) html += `<br>${item.type}`;
+        if (item.stats) html += `<br>${item.stats}`;
+        if (item.desc) html += `<br>${item.desc}`;
+        if (item.effect) html += `<br>Efeito: ${item.effect}`;
+        html += `</div></div>`;
+        items.push(html);
+    });
+
+    return items.join("\n");
 }
 
 // ============================================================================
@@ -445,10 +580,28 @@ document.addEventListener("DOMContentLoaded", () => {
         .addEventListener("click", clearAllFields);
 
     // Auto-save on input changes
-    const formInputs = document.querySelectorAll(".editor-input");
+    const formInputs = document.querySelectorAll(".editor-form .editor-input");
     formInputs.forEach((input) => {
         input.addEventListener("input", () => {
             storageManager.scheduleSave(getFormData());
         });
+    });
+
+    // Parse pasted HTML for equipment
+    document.getElementById("btnParseHtml").addEventListener("click", () => {
+        const html = document.getElementById("htmlPasteArea").value.trim();
+        if (!html) {
+            showStatusMessage("Paste your secundary.html code first", "warning");
+            return;
+        }
+        const items = parseSecundaryHTML(html);
+        if (items.length === 0) {
+            showStatusMessage("No items found in pasted HTML", "warning");
+            return;
+        }
+        selectedEquipment = {};
+        renderEquipmentList(items);
+        storageManager.scheduleSave(getFormData());
+        showStatusMessage(`Loaded ${items.length} items`, "success");
     });
 });
