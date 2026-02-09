@@ -309,6 +309,7 @@
 /* Carry items (Carregando consigo) */
 .haruki-carry-item {
   display: flex;
+  flex-direction: column;
   gap: 10px;
   border: 1px solid #371056;
   border-radius: 4px;
