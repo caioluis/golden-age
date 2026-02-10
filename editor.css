@@ -143,6 +143,29 @@
     margin: 8px 0 0 0;
 }
 
+/* Music Controls */
+.music-controls {
+    display: flex;
+    gap: 12px;
+    margin-top: 12px;
+    align-items: flex-end;
+    flex-wrap: wrap;
+}
+
+.music-inputs {
+    display: flex;
+    gap: 8px;
+    flex: 1;
+    min-width: 0;
+}
+
+.music-input {
+    flex: 1;
+    min-width: 0;
+    padding: 8px 12px !important;
+    font-size: 14px !important;
+}
+
 /* Status Input Groups */
 .status-input-group {
     margin-bottom: 16px;

@@ -348,3 +348,9 @@
   .haruki audio::-webkit-media-controls-mute-button  {
    filter: invert(1) opacity(0.8);
  }
+
+ .haruki music-player {
+  display: flex;
+  align-items: center;
+  font-style: italic;
+ }

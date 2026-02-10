@@ -43,6 +43,21 @@ class TextWrapper {
         return true;
     }
 
+    insertAtCursor(text) {
+        const pos = this.textarea.selectionStart;
+        const before = this.textarea.value.substring(0, pos);
+        const after = this.textarea.value.substring(pos);
+
+        this.textarea.value = before + text + after;
+
+        const newCursorPos = pos + text.length;
+        this.textarea.setSelectionRange(newCursorPos, newCursorPos);
+        this.textarea.focus();
+
+        storageManager.scheduleSave(getFormData());
+        return true;
+    }
+
     removeFormatting() {
         // Remove all haruki-speaks and haruki-thinks span tags
         const original = this.textarea.value;
@@ -561,6 +576,24 @@ document.addEventListener("DOMContentLoaded", () => {
 
     document.getElementById("btnClearFormat").addEventListener("click", () => {
         textWrapper.removeFormatting();
+    });
+
+    document.getElementById("btnMusic").addEventListener("click", () => {
+        const label = document.getElementById("musicLabel").value.trim();
+        const url = document.getElementById("musicUrl").value.trim();
+
+        if (!label || !url) {
+            showStatusMessage("Please fill in both label and audio URL", "warning");
+            return;
+        }
+
+        const snippet = `<div class="music-player">${label} <audio controls controlsList="nodownload noplaybackrate nofullscreen noremoteplayback" src="${url}"></audio></div>`;
+        textWrapper.insertAtCursor(snippet);
+
+        document.getElementById("musicLabel").value = "";
+        document.getElementById("musicUrl").value = "";
+
+        showStatusMessage("Music player inserted", "success");
     });
 
     // Generate & Copy button
