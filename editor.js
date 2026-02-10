@@ -146,19 +146,26 @@ class HTMLGenerator {
 </div>`;
     }
 
+    calcPercent(current, max) {
+        const c = parseFloat(current);
+        const m = parseFloat(max);
+        if (!m || isNaN(c) || isNaN(m)) return "100";
+        return Math.round((c / m) * 100).toString();
+    }
+
     generate(formData) {
         // Replace all placeholders
         let html = this.template
             .replace("{{TITLE}}", formData.title)
             .replace("{{SUBTITLE}}", formData.subtitle)
             .replace("{{NARRATIVE}}", this.processNarrative(formData.narrative))
-            .replace("{{HP_PERCENT}}", formData.hpPercent || "100")
+            .replace("{{HP_PERCENT}}", this.calcPercent(formData.hpCurrent, formData.hpMax))
             .replace("{{HP_CURRENT}}", formData.hpCurrent)
             .replace("{{HP_MAX}}", formData.hpMax)
-            .replace("{{EA_PERCENT}}", formData.eaPercent || "100")
+            .replace("{{EA_PERCENT}}", this.calcPercent(formData.eaCurrent, formData.eaMax))
             .replace("{{EA_CURRENT}}", formData.eaCurrent)
             .replace("{{EA_MAX}}", formData.eaMax)
-            .replace("{{SAN_PERCENT}}", formData.sanPercent || "100")
+            .replace("{{SAN_PERCENT}}", this.calcPercent(formData.sanCurrent, formData.sanMax))
             .replace("{{SAN_CURRENT}}", formData.sanCurrent)
             .replace("{{SAN_MAX}}", formData.sanMax)
             .replace(
@@ -232,9 +239,6 @@ class FormValidator {
         if (!this.isValidNumber(formData.hpMax)) {
             errors.push("HP Max must be a number");
         }
-        if (!this.isValidNumber(formData.hpPercent)) {
-            errors.push("HP Percent must be a number");
-        }
 
         // EA validation
         if (!this.isValidNumber(formData.eaCurrent)) {
@@ -243,9 +247,6 @@ class FormValidator {
         if (!this.isValidNumber(formData.eaMax)) {
             errors.push("EA Max must be a number");
         }
-        if (!this.isValidNumber(formData.eaPercent)) {
-            errors.push("EA Percent must be a number");
-        }
 
         // SAN validation
         if (!this.isValidNumber(formData.sanCurrent)) {
@@ -253,9 +254,6 @@ class FormValidator {
         }
         if (!this.isValidNumber(formData.sanMax)) {
             errors.push("SAN Max must be a number");
-        }
-        if (!this.isValidNumber(formData.sanPercent)) {
-            errors.push("SAN Percent must be a number");
         }
 
         // Word count validation
@@ -319,13 +317,10 @@ function getFormData() {
         narrative: document.getElementById("narrative").value,
         hpCurrent: document.getElementById("hpCurrent").value,
         hpMax: document.getElementById("hpMax").value,
-        hpPercent: document.getElementById("hpPercent").value,
         eaCurrent: document.getElementById("eaCurrent").value,
         eaMax: document.getElementById("eaMax").value,
-        eaPercent: document.getElementById("eaPercent").value,
         sanCurrent: document.getElementById("sanCurrent").value,
         sanMax: document.getElementById("sanMax").value,
-        sanPercent: document.getElementById("sanPercent").value,
         acoesOfensivasCurrent: document.getElementById("acoesOfensivasCurrent")
             .value,
         acoesOfensivasMax: document.getElementById("acoesOfensivasMax").value,
@@ -362,13 +357,10 @@ function setFormData(data) {
     document.getElementById("narrative").value = data.narrative || "";
     document.getElementById("hpCurrent").value = data.hpCurrent || "";
     document.getElementById("hpMax").value = data.hpMax || "";
-    document.getElementById("hpPercent").value = data.hpPercent || "";
     document.getElementById("eaCurrent").value = data.eaCurrent || "";
     document.getElementById("eaMax").value = data.eaMax || "";
-    document.getElementById("eaPercent").value = data.eaPercent || "";
     document.getElementById("sanCurrent").value = data.sanCurrent || "";
     document.getElementById("sanMax").value = data.sanMax || "";
-    document.getElementById("sanPercent").value = data.sanPercent || "";
     document.getElementById("acoesOfensivasCurrent").value =
         data.acoesOfensivasCurrent || "0";
     document.getElementById("acoesOfensivasMax").value =
@@ -467,12 +459,26 @@ function renderEquipmentList(items) {
         const card = document.createElement("div");
         card.className = "eq-card" + (sel.selected ? " eq-selected" : "");
 
+        const hasImg = item.img && !item.img.includes("placeholder");
+        const imgHtml = hasImg ? `<img src="${item.img}" class="eq-img" alt="${item.name}">` : "";
+        const statsHtml = item.stats ? `<div class="eq-stats">${item.stats}</div>` : "";
+        const descHtml = item.desc ? `<div class="eq-desc">${item.desc}</div>` : "";
+        const effectHtml = item.effect ? `<div class="eq-effect">Efeito: ${item.effect}</div>` : "";
+
         card.innerHTML = `
             <label class="eq-check-label">
                 <input type="checkbox" class="eq-check" data-index="${index}" ${sel.selected ? "checked" : ""}>
                 <span class="eq-name">${item.name}</span>
                 ${item.type ? `<span class="eq-type">${item.type}</span>` : ""}
             </label>
+            <div class="eq-body">
+                ${imgHtml}
+                <div class="eq-details">
+                    ${statsHtml}
+                    ${descHtml}
+                    ${effectHtml}
+                </div>
+            </div>
             <input type="text" class="eq-note editor-input" data-index="${index}" placeholder="Ex: na mochila, empunhada..." value="${sel.note || ""}">
         `;
 
