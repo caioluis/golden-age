@@ -185,6 +185,7 @@
             <!-- Action Buttons -->
             <div class="editor-actions">
                 <button type="button" id="btnGenerate" class="editor-button editor-button-primary">Generate & Copy HTML</button>
+                <button type="button" id="btnImport" class="editor-button editor-button-secondary">Import Code</button>
                 <button type="button" id="btnClear" class="editor-button editor-button-secondary">Clear All</button>
             </div>
 
@@ -203,6 +204,19 @@
         <div id="equipmentList" class="equipment-list"></div>
     </div>
     </div><!-- end editor-layout -->
+
+    <!-- Import Modal -->
+    <div id="importModal" class="modal-overlay" style="display: none;">
+        <div class="modal-content">
+            <h2 class="modal-title">Import Generated Code</h2>
+            <p class="modal-hint">Paste a previously generated HTML code below to populate the editor fields.</p>
+            <textarea id="importCodeArea" class="editor-input modal-textarea" placeholder="Paste your generated HTML code here..."></textarea>
+            <div class="modal-actions">
+                <button type="button" id="btnImportConfirm" class="editor-button editor-button-primary">Import</button>
+                <button type="button" id="btnImportCancel" class="editor-button editor-button-secondary">Cancel</button>
+            </div>
+        </div>
+    </div>
 
     <script src="editor.js"></script>
 </body>

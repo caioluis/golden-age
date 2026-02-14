@@ -547,6 +547,176 @@ function buildCarregandoText() {
 }
 
 // ============================================================================
+// HTML Importer - Parses generated HTML back into form data
+// ============================================================================
+
+function parseGeneratedHTML(htmlString) {
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(htmlString, "text/html");
+    const data = {};
+
+    // Title & Subtitle
+    const h2 = doc.querySelector("h2");
+    const h3 = doc.querySelector("h3");
+    data.title = h2 ? h2.textContent.trim() : "";
+    data.subtitle = h3 ? h3.textContent.trim() : "";
+
+    // Narrative: content between <hr> and <div class="haruki-stats">
+    const harukiDiv = doc.querySelector(".haruki");
+    if (harukiDiv) {
+        const hr = harukiDiv.querySelector("hr");
+        const statsDiv = harukiDiv.querySelector(".haruki-stats");
+        if (hr && statsDiv) {
+            let narrative = "";
+            let node = hr.nextSibling;
+            while (node && node !== statsDiv) {
+                if (node.nodeType === Node.TEXT_NODE) {
+                    narrative += node.textContent;
+                } else if (node.nodeType === Node.ELEMENT_NODE) {
+                    narrative += node.outerHTML;
+                }
+                node = node.nextSibling;
+            }
+            data.narrative = narrative.trim();
+        }
+    }
+
+    // HP, EA, SAN from status values
+    const statusItems = doc.querySelectorAll(".jjk-dossier-status-item");
+    statusItems.forEach((item) => {
+        const label = item.querySelector(".jjk-dossier-status-label")?.textContent?.trim();
+        const valueText = item.querySelector(".jjk-dossier-status-value")?.textContent?.trim();
+        if (label && valueText) {
+            const parts = valueText.split("/").map((s) => s.trim());
+            if (parts.length === 2) {
+                const key = label.toLowerCase();
+                data[key + "Current"] = parts[0];
+                data[key + "Max"] = parts[1];
+            }
+        }
+    });
+
+    // Counter items (word count, turno, combat actions)
+    const counterItems = doc.querySelectorAll(".haruki-counter-item");
+    const counterMap = {
+        "Palavras": "wordCount",
+        "Turno": "turno",
+        "Ofensivas": "acoesOfensivas",
+        "Defensivas": "acoesDefensivas",
+        "Suporte": "acoesSuporte",
+        "Livre": "acaoLivre",
+    };
+
+    counterItems.forEach((item) => {
+        const label = item.querySelector(".haruki-counter-label")?.textContent?.trim();
+        const value = item.querySelector(".haruki-counter-value")?.textContent?.trim();
+        if (label && value && counterMap[label]) {
+            const key = counterMap[label];
+            if (key === "wordCount") {
+                data.wordCount = value;
+            } else if (key === "turno") {
+                const parts = value.split("/");
+                data.postCurrent = parts[0]?.trim() || "";
+                data.postMax = parts[1]?.trim() || "";
+            } else {
+                const parts = value.split("/");
+                data[key + "Current"] = parts[0]?.trim() || "";
+                data[key + "Max"] = parts[1]?.trim() || "";
+            }
+        }
+    });
+
+    // Text fields from [b]Label:[/b] Value pattern
+    const accordionContent = doc.querySelector(".accordion-content");
+    if (accordionContent) {
+        const rawText = accordionContent.innerHTML;
+
+        const fieldMap = {
+            "Objetivo:": "objetivo",
+            "Principais ações no turno:": "principaisAcoes",
+            "Obs.:": "obs",
+            "Aptidões Usadas:": "aptidoes",
+            "Modificadores:": "modificadores",
+        };
+
+        // Extract text between [b]...[/b] markers
+        const fieldLabels = Object.keys(fieldMap);
+        for (let i = 0; i < fieldLabels.length; i++) {
+            const label = fieldLabels[i];
+            const key = fieldMap[label];
+            const startMarker = `[b]${label}[/b] `;
+            const startIdx = rawText.indexOf(startMarker);
+            if (startIdx === -1) continue;
+
+            const valueStart = startIdx + startMarker.length;
+
+            // Find the end: next [b] marker or </p>
+            let valueEnd = rawText.length;
+            const nextLabel = fieldLabels[i + 1];
+            if (nextLabel) {
+                const nextIdx = rawText.indexOf(`[b]${nextLabel}[/b]`, valueStart);
+                if (nextIdx !== -1) valueEnd = nextIdx;
+            } else {
+                const pEnd = rawText.indexOf("</p>", valueStart);
+                if (pEnd !== -1) valueEnd = pEnd;
+            }
+
+            data[key] = rawText.substring(valueStart, valueEnd).replace(/<[^>]*>/g, "").trim();
+        }
+    }
+
+    // Bonificações and Técnicas from nested details
+    const allDetails = doc.querySelectorAll("details");
+    allDetails.forEach((detail) => {
+        const summary = detail.querySelector("summary")?.textContent?.trim();
+        if (summary === "Bonificações de status") {
+            const p = detail.querySelector("p");
+            data.bonificacoes = p ? p.textContent.trim() : "";
+        } else if (summary === "Técnicas Usadas") {
+            const p = detail.querySelector("p");
+            data.tecnicas = p ? p.textContent.trim() : "";
+        }
+    });
+
+    return data;
+}
+
+function importGeneratedCode(htmlString) {
+    const data = parseGeneratedHTML(htmlString);
+
+    // Map parsed data to form fields
+    if (data.title) document.getElementById("title").value = data.title;
+    if (data.subtitle) document.getElementById("subtitle").value = data.subtitle;
+    if (data.narrative) document.getElementById("narrative").value = data.narrative;
+    if (data.hpCurrent) document.getElementById("hpCurrent").value = data.hpCurrent;
+    if (data.hpMax) document.getElementById("hpMax").value = data.hpMax;
+    if (data.eaCurrent) document.getElementById("eaCurrent").value = data.eaCurrent;
+    if (data.eaMax) document.getElementById("eaMax").value = data.eaMax;
+    if (data.sanCurrent) document.getElementById("sanCurrent").value = data.sanCurrent;
+    if (data.sanMax) document.getElementById("sanMax").value = data.sanMax;
+    if (data.wordCount) document.getElementById("wordCount").value = data.wordCount;
+    if (data.postCurrent) document.getElementById("postCurrent").value = data.postCurrent;
+    if (data.postMax) document.getElementById("postMax").value = data.postMax;
+    if (data.acoesOfensivasCurrent) document.getElementById("acoesOfensivasCurrent").value = data.acoesOfensivasCurrent;
+    if (data.acoesOfensivasMax) document.getElementById("acoesOfensivasMax").value = data.acoesOfensivasMax;
+    if (data.acoesDefensivasCurrent) document.getElementById("acoesDefensivasCurrent").value = data.acoesDefensivasCurrent;
+    if (data.acoesDefensivasMax) document.getElementById("acoesDefensivasMax").value = data.acoesDefensivasMax;
+    if (data.acoesSuporteCurrent) document.getElementById("acoesSuporteCurrent").value = data.acoesSuporteCurrent;
+    if (data.acoesSuporteMax) document.getElementById("acoesSuporteMax").value = data.acoesSuporteMax;
+    if (data.acaoLivreCurrent) document.getElementById("acaoLivreCurrent").value = data.acaoLivreCurrent;
+    if (data.acaoLivreMax) document.getElementById("acaoLivreMax").value = data.acaoLivreMax;
+    if (data.objetivo) document.getElementById("objetivo").value = data.objetivo;
+    if (data.principaisAcoes) document.getElementById("principaisAcoes").value = data.principaisAcoes;
+    if (data.obs) document.getElementById("obs").value = data.obs;
+    if (data.aptidoes) document.getElementById("aptidoes").value = data.aptidoes;
+    if (data.modificadores) document.getElementById("modificadores").value = data.modificadores;
+    if (data.bonificacoes) document.getElementById("bonificacoes").value = data.bonificacoes;
+    if (data.tecnicas) document.getElementById("tecnicas").value = data.tecnicas;
+
+    storageManager.scheduleSave(getFormData());
+}
+
+// ============================================================================
 // Initialize Application
 // ============================================================================
 
@@ -624,6 +794,37 @@ document.addEventListener("DOMContentLoaded", () => {
         input.addEventListener("input", () => {
             storageManager.scheduleSave(getFormData());
         });
+    });
+
+    // Import modal
+    const importModal = document.getElementById("importModal");
+    const importCodeArea = document.getElementById("importCodeArea");
+
+    document.getElementById("btnImport").addEventListener("click", () => {
+        importCodeArea.value = "";
+        importModal.style.display = "flex";
+        importCodeArea.focus();
+    });
+
+    document.getElementById("btnImportConfirm").addEventListener("click", () => {
+        const code = importCodeArea.value.trim();
+        if (!code) {
+            showStatusMessage("Please paste some code first", "warning");
+            return;
+        }
+        importGeneratedCode(code);
+        importModal.style.display = "none";
+        showStatusMessage("Code imported successfully!", "success");
+    });
+
+    document.getElementById("btnImportCancel").addEventListener("click", () => {
+        importModal.style.display = "none";
+    });
+
+    importModal.addEventListener("click", (e) => {
+        if (e.target === importModal) {
+            importModal.style.display = "none";
+        }
     });
 
     // Parse pasted HTML for equipment

@@ -521,6 +521,68 @@
 }
 
 
+/* Import Modal */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.modal-content {
+    background: radial-gradient(circle at 50% 50%, rgba(31, 10, 41, 1), rgba(13, 13, 13, 1));
+    border: 2px solid #bc81e9;
+    border-radius: 8px;
+    padding: 32px;
+    width: 100%;
+    max-width: 700px;
+    max-height: 80vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.modal-title {
+    font-family: 'Cinzel', serif;
+    color: #bc81e9;
+    font-size: 20px;
+    margin: 0 0 8px 0;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+.modal-hint {
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    color: #888;
+    margin: 0 0 16px 0;
+}
+
+.modal-textarea {
+    min-height: 250px;
+    resize: vertical;
+    font-size: 12px !important;
+    flex: 1;
+}
+
+.modal-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 16px;
+    justify-content: flex-end;
+}
+
+.modal-actions .editor-button {
+    padding: 10px 24px;
+}
+
 /* Dark Theme Body */
 body {
     background: #0d0d0d;
