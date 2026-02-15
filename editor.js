@@ -154,14 +154,16 @@ class HTMLGenerator {
 [b]Aptidões Usadas:[/b] {{APTIDOES}}
 [b]Modificadores:[/b] {{MODIFICADORES}}
 </p></div></div>
-<details><summary>Carregando consigo</summary><div class="accordion-content"><div>{{CARREGANDO}}</div></div></details>
-<details><summary>Bonificações de status</summary><div class="accordion-content"><div><p>{{BONIFICACOES}}</p></div></div></details>
-<details><summary>Técnicas Usadas</summary><div class="accordion-content"><div><p>{{TECNICAS}}</p></div></div></details>
+<details><summary>Carregando consigo</summary><div class="accordion-content"><div>{{CARREGANDO}}</div></div></details><details><summary>Bonificações de status</summary><div class="accordion-content"><div><p>{{BONIFICACOES}}</p></div></div></details><details><summary>Técnicas Usadas</summary><div class="accordion-content"><div><p>{{TECNICAS}}</p></div></div></details>
 </details>
 </div>`;
     }
 
-    calcPercent(current, max) {
+    calcPercent(current, max, override) {
+        // Use override if available, otherwise calculate
+        if (override !== null && override !== undefined) {
+            return override;
+        }
         const c = parseFloat(current);
         const m = parseFloat(max);
         if (!m || isNaN(c) || isNaN(m)) return "100";
@@ -174,13 +176,34 @@ class HTMLGenerator {
             .replace("{{TITLE}}", formData.title)
             .replace("{{SUBTITLE}}", formData.subtitle)
             .replace("{{NARRATIVE}}", this.processNarrative(formData.narrative))
-            .replace("{{HP_PERCENT}}", this.calcPercent(formData.hpCurrent, formData.hpMax))
+            .replace(
+                "{{HP_PERCENT}}",
+                this.calcPercent(
+                    formData.hpCurrent,
+                    formData.hpMax,
+                    formData.hpPercent,
+                ),
+            )
             .replace("{{HP_CURRENT}}", formData.hpCurrent)
             .replace("{{HP_MAX}}", formData.hpMax)
-            .replace("{{EA_PERCENT}}", this.calcPercent(formData.eaCurrent, formData.eaMax))
+            .replace(
+                "{{EA_PERCENT}}",
+                this.calcPercent(
+                    formData.eaCurrent,
+                    formData.eaMax,
+                    formData.eaPercent,
+                ),
+            )
             .replace("{{EA_CURRENT}}", formData.eaCurrent)
             .replace("{{EA_MAX}}", formData.eaMax)
-            .replace("{{SAN_PERCENT}}", this.calcPercent(formData.sanCurrent, formData.sanMax))
+            .replace(
+                "{{SAN_PERCENT}}",
+                this.calcPercent(
+                    formData.sanCurrent,
+                    formData.sanMax,
+                    formData.sanPercent,
+                ),
+            )
             .replace("{{SAN_CURRENT}}", formData.sanCurrent)
             .replace("{{SAN_MAX}}", formData.sanMax)
             .replace(
@@ -325,6 +348,12 @@ async function copyToClipboard(text) {
     }
 }
 
+// Global variables to store raw imported content
+let carregandoRawOverride = null;
+let hpPercentOverride = null;
+let eaPercentOverride = null;
+let sanPercentOverride = null;
+
 function getFormData() {
     return {
         title: document.getElementById("title").value,
@@ -332,10 +361,13 @@ function getFormData() {
         narrative: document.getElementById("narrative").value,
         hpCurrent: document.getElementById("hpCurrent").value,
         hpMax: document.getElementById("hpMax").value,
+        hpPercent: hpPercentOverride,
         eaCurrent: document.getElementById("eaCurrent").value,
         eaMax: document.getElementById("eaMax").value,
+        eaPercent: eaPercentOverride,
         sanCurrent: document.getElementById("sanCurrent").value,
         sanMax: document.getElementById("sanMax").value,
+        sanPercent: sanPercentOverride,
         acoesOfensivasCurrent: document.getElementById("acoesOfensivasCurrent")
             .value,
         acoesOfensivasMax: document.getElementById("acoesOfensivasMax").value,
@@ -358,7 +390,11 @@ function getFormData() {
         modificadores: document.getElementById("modificadores").value,
         bonificacoes: document.getElementById("bonificacoes").value,
         tecnicas: document.getElementById("tecnicas").value,
-        carregando: buildCarregandoText(),
+        carregando:
+            carregandoRawOverride !== null
+                ? carregandoRawOverride
+                : buildCarregandoText(),
+        carregandoRawOverride: carregandoRawOverride,
         parsedItems: parsedItems,
         selectedEquipment: selectedEquipment,
     };
@@ -395,12 +431,27 @@ function setFormData(data) {
     document.getElementById("postCurrent").value = data.postCurrent || "";
     document.getElementById("postMax").value = data.postMax || "";
     document.getElementById("objetivo").value = data.objetivo || "";
-    document.getElementById("principaisAcoes").value = data.principaisAcoes || "";
+    document.getElementById("principaisAcoes").value =
+        data.principaisAcoes || "";
     document.getElementById("obs").value = data.obs || "";
     document.getElementById("aptidoes").value = data.aptidoes || "";
     document.getElementById("modificadores").value = data.modificadores || "";
     document.getElementById("bonificacoes").value = data.bonificacoes || "";
     document.getElementById("tecnicas").value = data.tecnicas || "";
+
+    // Restore raw overrides
+    if (data.carregandoRawOverride !== undefined) {
+        carregandoRawOverride = data.carregandoRawOverride;
+    }
+    if (data.hpPercent !== undefined) {
+        hpPercentOverride = data.hpPercent;
+    }
+    if (data.eaPercent !== undefined) {
+        eaPercentOverride = data.eaPercent;
+    }
+    if (data.sanPercent !== undefined) {
+        sanPercentOverride = data.sanPercent;
+    }
 
     // Restore equipment selections
     if (data.selectedEquipment) {
@@ -475,10 +526,18 @@ function renderEquipmentList(items) {
         card.className = "eq-card" + (sel.selected ? " eq-selected" : "");
 
         const hasImg = item.img && !item.img.includes("placeholder");
-        const imgHtml = hasImg ? `<img src="${item.img}" class="eq-img" alt="${item.name}">` : "";
-        const statsHtml = item.stats ? `<div class="eq-stats">${item.stats}</div>` : "";
-        const descHtml = item.desc ? `<div class="eq-desc">${item.desc}</div>` : "";
-        const effectHtml = item.effect ? `<div class="eq-effect">Efeito: ${item.effect}</div>` : "";
+        const imgHtml = hasImg
+            ? `<img src="${item.img}" class="eq-img" alt="${item.name}">`
+            : "";
+        const statsHtml = item.stats
+            ? `<div class="eq-stats">${item.stats}</div>`
+            : "";
+        const descHtml = item.desc
+            ? `<div class="eq-desc">${item.desc}</div>`
+            : "";
+        const effectHtml = item.effect
+            ? `<div class="eq-effect">Efeito: ${item.effect}</div>`
+            : "";
 
         card.innerHTML = `
             <label class="eq-check-label">
@@ -504,9 +563,12 @@ function renderEquipmentList(items) {
     list.querySelectorAll(".eq-check").forEach((cb) => {
         cb.addEventListener("change", (e) => {
             const idx = e.target.dataset.index;
-            if (!selectedEquipment[idx]) selectedEquipment[idx] = { selected: false, note: "" };
+            if (!selectedEquipment[idx])
+                selectedEquipment[idx] = { selected: false, note: "" };
             selectedEquipment[idx].selected = e.target.checked;
-            e.target.closest(".eq-card").classList.toggle("eq-selected", e.target.checked);
+            e.target
+                .closest(".eq-card")
+                .classList.toggle("eq-selected", e.target.checked);
             storageManager.scheduleSave(getFormData());
         });
     });
@@ -514,7 +576,8 @@ function renderEquipmentList(items) {
     list.querySelectorAll(".eq-note").forEach((input) => {
         input.addEventListener("input", (e) => {
             const idx = e.target.dataset.index;
-            if (!selectedEquipment[idx]) selectedEquipment[idx] = { selected: false, note: "" };
+            if (!selectedEquipment[idx])
+                selectedEquipment[idx] = { selected: false, note: "" };
             selectedEquipment[idx].note = e.target.value;
             storageManager.scheduleSave(getFormData());
         });
@@ -581,17 +644,34 @@ function parseGeneratedHTML(htmlString) {
         }
     }
 
-    // HP, EA, SAN from status values
+    // HP, EA, SAN from status values and bar percentages
     const statusItems = doc.querySelectorAll(".jjk-dossier-status-item");
     statusItems.forEach((item) => {
-        const label = item.querySelector(".jjk-dossier-status-label")?.textContent?.trim();
-        const valueText = item.querySelector(".jjk-dossier-status-value")?.textContent?.trim();
+        const label = item
+            .querySelector(".jjk-dossier-status-label")
+            ?.textContent?.trim();
+        const valueText = item
+            .querySelector(".jjk-dossier-status-value")
+            ?.textContent?.trim();
+        const barFill = item.querySelector(".jjk-dossier-status-bar-fill");
+
         if (label && valueText) {
             const parts = valueText.split("/").map((s) => s.trim());
             if (parts.length === 2) {
                 const key = label.toLowerCase();
                 data[key + "Current"] = parts[0];
                 data[key + "Max"] = parts[1];
+
+                // Extract the actual width percentage from style attribute
+                if (barFill) {
+                    const style = barFill.getAttribute("style");
+                    const widthMatch = style?.match(
+                        /width:\s*(\d+(?:\.\d+)?)%/,
+                    );
+                    if (widthMatch) {
+                        data[key + "Percent"] = widthMatch[1];
+                    }
+                }
             }
         }
     });
@@ -599,17 +679,21 @@ function parseGeneratedHTML(htmlString) {
     // Counter items (word count, turno, combat actions)
     const counterItems = doc.querySelectorAll(".haruki-counter-item");
     const counterMap = {
-        "Palavras": "wordCount",
-        "Turno": "turno",
-        "Ofensivas": "acoesOfensivas",
-        "Defensivas": "acoesDefensivas",
-        "Suporte": "acoesSuporte",
-        "Livre": "acaoLivre",
+        Palavras: "wordCount",
+        Turno: "turno",
+        Ofensivas: "acoesOfensivas",
+        Defensivas: "acoesDefensivas",
+        Suporte: "acoesSuporte",
+        Livre: "acaoLivre",
     };
 
     counterItems.forEach((item) => {
-        const label = item.querySelector(".haruki-counter-label")?.textContent?.trim();
-        const value = item.querySelector(".haruki-counter-value")?.textContent?.trim();
+        const label = item
+            .querySelector(".haruki-counter-label")
+            ?.textContent?.trim();
+        const value = item
+            .querySelector(".haruki-counter-value")
+            ?.textContent?.trim();
         if (label && value && counterMap[label]) {
             const key = counterMap[label];
             if (key === "wordCount") {
@@ -639,29 +723,38 @@ function parseGeneratedHTML(htmlString) {
             "Modificadores:": "modificadores",
         };
 
-        // Extract text between [b]...[/b] markers
+        // Extract text between [b]...[/b] markers (preserve HTML)
         const fieldLabels = Object.keys(fieldMap);
         for (let i = 0; i < fieldLabels.length; i++) {
             const label = fieldLabels[i];
             const key = fieldMap[label];
-            const startMarker = `[b]${label}[/b] `;
+            const startMarker = `[b]${label}[/b]`;
             const startIdx = rawText.indexOf(startMarker);
             if (startIdx === -1) continue;
 
-            const valueStart = startIdx + startMarker.length;
+            let valueStart = startIdx + startMarker.length;
+
+            // Skip one space or newline after the marker if present
+            if (rawText[valueStart] === ' ' || rawText[valueStart] === '\n') {
+                valueStart++;
+            }
 
             // Find the end: next [b] marker or </p>
             let valueEnd = rawText.length;
             const nextLabel = fieldLabels[i + 1];
             if (nextLabel) {
-                const nextIdx = rawText.indexOf(`[b]${nextLabel}[/b]`, valueStart);
+                const nextIdx = rawText.indexOf(
+                    `[b]${nextLabel}[/b]`,
+                    valueStart,
+                );
                 if (nextIdx !== -1) valueEnd = nextIdx;
             } else {
                 const pEnd = rawText.indexOf("</p>", valueStart);
                 if (pEnd !== -1) valueEnd = pEnd;
             }
 
-            data[key] = rawText.substring(valueStart, valueEnd).replace(/<[^>]*>/g, "").trim();
+            // Preserve raw HTML content exactly as-is, only trim outer whitespace
+            data[key] = rawText.substring(valueStart, valueEnd).trim();
         }
     }
 
@@ -675,6 +768,10 @@ function parseGeneratedHTML(htmlString) {
         } else if (summary === "Técnicas Usadas") {
             const p = detail.querySelector("p");
             data.tecnicas = p ? p.textContent.trim() : "";
+        } else if (summary === "Carregando consigo") {
+            // Extract the raw HTML content for "Carregando consigo"
+            const contentDiv = detail.querySelector(".accordion-content > div");
+            data.carregandoRaw = contentDiv ? contentDiv.innerHTML.trim() : "";
         }
     });
 
@@ -686,32 +783,73 @@ function importGeneratedCode(htmlString) {
 
     // Map parsed data to form fields
     if (data.title) document.getElementById("title").value = data.title;
-    if (data.subtitle) document.getElementById("subtitle").value = data.subtitle;
-    if (data.narrative) document.getElementById("narrative").value = data.narrative;
-    if (data.hpCurrent) document.getElementById("hpCurrent").value = data.hpCurrent;
+    if (data.subtitle)
+        document.getElementById("subtitle").value = data.subtitle;
+    if (data.narrative)
+        document.getElementById("narrative").value = data.narrative;
+    if (data.hpCurrent)
+        document.getElementById("hpCurrent").value = data.hpCurrent;
     if (data.hpMax) document.getElementById("hpMax").value = data.hpMax;
-    if (data.eaCurrent) document.getElementById("eaCurrent").value = data.eaCurrent;
+    if (data.eaCurrent)
+        document.getElementById("eaCurrent").value = data.eaCurrent;
     if (data.eaMax) document.getElementById("eaMax").value = data.eaMax;
-    if (data.sanCurrent) document.getElementById("sanCurrent").value = data.sanCurrent;
+    if (data.sanCurrent)
+        document.getElementById("sanCurrent").value = data.sanCurrent;
     if (data.sanMax) document.getElementById("sanMax").value = data.sanMax;
-    if (data.wordCount) document.getElementById("wordCount").value = data.wordCount;
-    if (data.postCurrent) document.getElementById("postCurrent").value = data.postCurrent;
+    if (data.wordCount)
+        document.getElementById("wordCount").value = data.wordCount;
+    if (data.postCurrent)
+        document.getElementById("postCurrent").value = data.postCurrent;
     if (data.postMax) document.getElementById("postMax").value = data.postMax;
-    if (data.acoesOfensivasCurrent) document.getElementById("acoesOfensivasCurrent").value = data.acoesOfensivasCurrent;
-    if (data.acoesOfensivasMax) document.getElementById("acoesOfensivasMax").value = data.acoesOfensivasMax;
-    if (data.acoesDefensivasCurrent) document.getElementById("acoesDefensivasCurrent").value = data.acoesDefensivasCurrent;
-    if (data.acoesDefensivasMax) document.getElementById("acoesDefensivasMax").value = data.acoesDefensivasMax;
-    if (data.acoesSuporteCurrent) document.getElementById("acoesSuporteCurrent").value = data.acoesSuporteCurrent;
-    if (data.acoesSuporteMax) document.getElementById("acoesSuporteMax").value = data.acoesSuporteMax;
-    if (data.acaoLivreCurrent) document.getElementById("acaoLivreCurrent").value = data.acaoLivreCurrent;
-    if (data.acaoLivreMax) document.getElementById("acaoLivreMax").value = data.acaoLivreMax;
-    if (data.objetivo) document.getElementById("objetivo").value = data.objetivo;
-    if (data.principaisAcoes) document.getElementById("principaisAcoes").value = data.principaisAcoes;
+    if (data.acoesOfensivasCurrent)
+        document.getElementById("acoesOfensivasCurrent").value =
+            data.acoesOfensivasCurrent;
+    if (data.acoesOfensivasMax)
+        document.getElementById("acoesOfensivasMax").value =
+            data.acoesOfensivasMax;
+    if (data.acoesDefensivasCurrent)
+        document.getElementById("acoesDefensivasCurrent").value =
+            data.acoesDefensivasCurrent;
+    if (data.acoesDefensivasMax)
+        document.getElementById("acoesDefensivasMax").value =
+            data.acoesDefensivasMax;
+    if (data.acoesSuporteCurrent)
+        document.getElementById("acoesSuporteCurrent").value =
+            data.acoesSuporteCurrent;
+    if (data.acoesSuporteMax)
+        document.getElementById("acoesSuporteMax").value = data.acoesSuporteMax;
+    if (data.acaoLivreCurrent)
+        document.getElementById("acaoLivreCurrent").value =
+            data.acaoLivreCurrent;
+    if (data.acaoLivreMax)
+        document.getElementById("acaoLivreMax").value = data.acaoLivreMax;
+    if (data.objetivo)
+        document.getElementById("objetivo").value = data.objetivo;
+    if (data.principaisAcoes)
+        document.getElementById("principaisAcoes").value = data.principaisAcoes;
     if (data.obs) document.getElementById("obs").value = data.obs;
-    if (data.aptidoes) document.getElementById("aptidoes").value = data.aptidoes;
-    if (data.modificadores) document.getElementById("modificadores").value = data.modificadores;
-    if (data.bonificacoes) document.getElementById("bonificacoes").value = data.bonificacoes;
-    if (data.tecnicas) document.getElementById("tecnicas").value = data.tecnicas;
+    if (data.aptidoes)
+        document.getElementById("aptidoes").value = data.aptidoes;
+    if (data.modificadores)
+        document.getElementById("modificadores").value = data.modificadores;
+    if (data.bonificacoes)
+        document.getElementById("bonificacoes").value = data.bonificacoes;
+    if (data.tecnicas)
+        document.getElementById("tecnicas").value = data.tecnicas;
+
+    // Store the raw "Carregando consigo" content and bar percentages
+    if (data.carregandoRaw !== undefined) {
+        carregandoRawOverride = data.carregandoRaw;
+    }
+    if (data.hpPercent !== undefined) {
+        hpPercentOverride = data.hpPercent;
+    }
+    if (data.eaPercent !== undefined) {
+        eaPercentOverride = data.eaPercent;
+    }
+    if (data.sanPercent !== undefined) {
+        sanPercentOverride = data.sanPercent;
+    }
 
     storageManager.scheduleSave(getFormData());
 }
@@ -753,7 +891,10 @@ document.addEventListener("DOMContentLoaded", () => {
         const url = document.getElementById("musicUrl").value.trim();
 
         if (!label || !url) {
-            showStatusMessage("Please fill in both label and audio URL", "warning");
+            showStatusMessage(
+                "Please fill in both label and audio URL",
+                "warning",
+            );
             return;
         }
 
@@ -806,16 +947,18 @@ document.addEventListener("DOMContentLoaded", () => {
         importCodeArea.focus();
     });
 
-    document.getElementById("btnImportConfirm").addEventListener("click", () => {
-        const code = importCodeArea.value.trim();
-        if (!code) {
-            showStatusMessage("Please paste some code first", "warning");
-            return;
-        }
-        importGeneratedCode(code);
-        importModal.style.display = "none";
-        showStatusMessage("Code imported successfully!", "success");
-    });
+    document
+        .getElementById("btnImportConfirm")
+        .addEventListener("click", () => {
+            const code = importCodeArea.value.trim();
+            if (!code) {
+                showStatusMessage("Please paste some code first", "warning");
+                return;
+            }
+            importGeneratedCode(code);
+            importModal.style.display = "none";
+            showStatusMessage("Code imported successfully!", "success");
+        });
 
     document.getElementById("btnImportCancel").addEventListener("click", () => {
         importModal.style.display = "none";
@@ -831,7 +974,10 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("btnParseHtml").addEventListener("click", () => {
         const html = document.getElementById("htmlPasteArea").value.trim();
         if (!html) {
-            showStatusMessage("Paste your secundary.html code first", "warning");
+            showStatusMessage(
+                "Paste your secundary.html code first",
+                "warning",
+            );
             return;
         }
         const items = parseSecundaryHTML(html);
