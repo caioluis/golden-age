@@ -153,7 +153,6 @@ class HTMLGenerator {
 [b]Obs.:[/b] {{OBS}}
 [b]Aptidões Usadas:[/b] {{APTIDOES}}
 [b]Modificadores:[/b] {{MODIFICADORES}}
-</p></div></div>
 <details><summary>Carregando consigo</summary><div class="accordion-content"><div>{{CARREGANDO}}</div></div></details><details><summary>Bonificações de status</summary><div class="accordion-content"><div><p>{{BONIFICACOES}}</p></div></div></details><details><summary>Técnicas Usadas</summary><div class="accordion-content"><div><p>{{TECNICAS}}</p></div></div></details>
 </details>
 </div>`;
@@ -750,11 +749,14 @@ function parseGeneratedHTML(htmlString) {
                 if (nextIdx !== -1) valueEnd = nextIdx;
             } else {
                 const pEnd = rawText.indexOf("</p>", valueStart);
-                if (pEnd !== -1) valueEnd = pEnd;
+                const detailsStart = rawText.indexOf("<details", valueStart);
+                if (pEnd !== -1 && detailsStart !== -1) valueEnd = Math.min(pEnd, detailsStart);
+                else if (pEnd !== -1) valueEnd = pEnd;
+                else if (detailsStart !== -1) valueEnd = detailsStart;
             }
 
-            // Preserve raw HTML content exactly as-is, only trim outer whitespace
-            data[key] = rawText.substring(valueStart, valueEnd).trim();
+            // Preserve raw HTML content exactly as-is, only trim trailing whitespace
+            data[key] = rawText.substring(valueStart, valueEnd).trimEnd();
         }
     }
 
