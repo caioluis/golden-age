@@ -65,7 +65,7 @@
     gap: 4px;
 }
 
-.haruki-sign p, .takeru-sign p, .harukietakeru-sign p {
+.haruki-sign p, .takeru-sign p {
     position: absolute;
     left: 10px;
     font-style: italic;
