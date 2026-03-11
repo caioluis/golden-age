@@ -6,7 +6,11 @@
     display: none;
 }
 
-.haruki-sign, .takeru-sign {
+.post:not(:has(.harukietakeru)) .harukietakeru-sign {
+    display: none;
+}
+
+.haruki-sign, .takeru-sign, .harukietakeru-sign {
     position: absolute;
     bottom: 0;
     font-size: 16px;
@@ -27,6 +31,18 @@
     background-color: #561010;
 }
 
+
+/* gradient */
+.harukietakeru-sign {
+    display: flex;
+    justify-content: space-between;
+    background: linear-gradient(90deg, #371056 0%, #561010 100%);
+    font-style: italic;
+    text-transform: uppercase;
+    padding-left: 10px!important;
+    padding-right: 10px!important;
+}
+
 .sig-link, .sig-link:visited {
     text-decoration: none!important;
     color: white;
@@ -34,22 +50,22 @@
     align-items: center;
 }
 
-.post:has(.haruki-sign), .post:has(.takeru-sign) {
+.post:has(.haruki-sign), .post:has(.takeru-sign), .post:has(.harukietakeru-sign) {
     padding: 0;
     border-bottom-left-radius: 8px;
 }
 
-.post-signature:has(.haruki-sign), .post-signature:has(.takeru-sign) {
+.post-signature:has(.haruki-sign), .post-signature:has(.takeru-sign), .post-signature:has(.harukietakeru-sign) {
     font-size: 0;
 }
 
-.haruki-sign .links, .takeru-sign .links {
+.haruki-sign .links, .takeru-sign .links, .harukietakeru-sign .links {
     display: flex;
     align-items: center;
     gap: 4px;
 }
 
-.haruki-sign p, .takeru-sign p {
+.haruki-sign p, .takeru-sign p, .harukietakeru-sign p {
     position: absolute;
     left: 10px;
     font-style: italic;
