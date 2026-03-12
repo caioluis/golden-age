@@ -354,3 +354,101 @@
   align-items: center;
   font-style: italic;
  }
+
+ .gojotwins-stats {
+    display: flex;
+}
+
+.gojotwins-stats div {
+    width: 50%;
+}
+
+.harukietakeru {
+  background:linear-gradient(90deg, hsl(281 61% 7% / 1) 0%, hsl(297 46% 7% / 1) 50%, hsl(0 69% 7% / 1) 100%) padding-box, linear-gradient(90deg, #371056 0%, rgb(62, 17, 44) 50%, #561010 100%) border-box!important;
+  border: 2px solid transparent!important;
+}
+
+.takeru-stats {
+  border: 1px solid #561010!important;
+  padding: 20px 30px!important;
+  display: flex!important;
+  flex-direction: column!important;
+  gap: 20px!important; 
+  position: relative!important;
+  z-index: 2!important;
+}
+
+/* Grid Específico e Isolado - Adicionado seletor pai .haruki-stats */
+.harukietakeru .takeru-stats .jjk-dossier-status-item {
+  display: grid !important; 
+  grid-template-columns: 40px 1fr 70px !important; /* Coluna fixa para números */
+  align-items: center; gap: 20px;
+  border: none; background: transparent; margin: 0; padding: 0; 
+  min-height: 0; width: 100%;
+}
+
+/* Labels */
+.harukietakeru .takeru-stats .jjk-dossier-status-label { 
+  font-family: 'Cinzel', serif; font-size: 0.8em; 
+  color: #e95d5d !important; 
+  text-align: right; letter-spacing: 1px;
+  background: transparent; border: none; margin: 0; padding: 0;
+  line-height: normal;
+}
+
+/* Valores Numéricos */
+.harukietakeru .takeru-stats .jjk-dossier-status-value { 
+  font-family: 'Inter', sans-serif; font-size: 0.85em; 
+  color: #888 !important; 
+  text-align: right; font-weight: 300;
+  white-space: nowrap; 
+  background: transparent; border: none; margin: 0; padding: 0;
+  line-height: normal;
+}
+
+/* Barras Wrapper */
+.harukietakeru .takeru-stats .jjk-dossier-status-bar-wrapper {
+  width: 100%; height: 4px; 
+  background: #151515 !important;
+  border-radius: 0; overflow: hidden; border: none; margin: 0; padding: 0;
+  box-shadow: none;
+}
+
+/* Barras Internas */
+.harukietakeru .takeru-stats .jjk-dossier-status-bar { 
+  width: 100%; height: 100%; background: transparent; border: none; margin: 0; padding: 0; display: block;
+}
+
+/* Cores das Barras */
+.harukietakeru .takeru-stats .jjk-dossier-status-bar-fill { height: 100%; border-radius: 0; border: none; margin: 0; display: block; }
+.harukietakeru .takeru-stats .jjk-dossier-hp-fill { background: #5e2a2a !important; box-shadow: none !important; }
+.harukietakeru .takeru-stats .jjk-dossier-ea-fill { background: rgb(6, 82, 132) !important; box-shadow: none !important; }
+
+/* Responsivo */
+@media (max-width: 600px) {
+  .takeru-stats { padding: 15px; }
+  .harukietakeru .takeru-stats .jjk-dossier-status-item { grid-template-columns: 40px 1fr 65px !important; gap: 10px; }
+}
+
+.takeru-speaks {
+    color: rgb(224, 71, 71);
+    font-weight: 700;
+}
+
+.takeru-thinks {
+    color: rgb(253, 112, 112);
+    font-style: italic;
+}
+
+.takeru-details {
+    border: 1px solid #561010!important;
+
+}
+
+.takeru-details:hover {
+  background: #5610106c!important;
+}
+
+.takeru-details[open] {
+  background: #5610101a!important;
+}
