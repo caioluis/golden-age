@@ -73,6 +73,6 @@
 }
 
 .harukietakeru-sign p a {
-    color: inherit;
-    text-decoration: none;
+    color: white!important;
+    text-decoration: none!important;
 }
