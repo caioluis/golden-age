@@ -452,3 +452,8 @@
 .takeru-details[open] {
   background: #5610101a!important;
 }
+
+.harukietakeru hr {
+    border-top: 3px solid transparent;
+    background: linear-gradient(90deg, hsl(281 61% 7% / 1) 0%, hsl(297 46% 7% / 1) 50%, hsl(0 69% 7% / 1) 100%) padding-box, linear-gradient(90deg, #371056 0%, rgb(62, 17, 44) 50%, #561010 100%) border-box !important;
+}
