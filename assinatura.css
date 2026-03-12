@@ -72,3 +72,7 @@
     text-transform: uppercase;
 }
 
+.harukietakeru-sign p a {
+    color: inherit;
+    text-decoration: none;
+}
