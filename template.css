@@ -2,6 +2,7 @@
     padding: 48px 128px;
     background: radial-gradient(circle at 50% 50%, rgba(31, 10, 41, 1), rgba(13, 13, 13, 1)), url(/👆/that/noise.svg);
     border: 2px solid #371056;
+    text-align: justify;
 }
 
 .haruki h2 {
