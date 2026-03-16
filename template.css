@@ -321,8 +321,8 @@
 }
 
 .takeru-bag, .takeru-carry-item {
-  border-color: #561010;
-  background-color: #5610101a;
+  border-color: #561010!important;
+  background-color: #5610101a!important;
 }
 
 .haruki-carry-img {
