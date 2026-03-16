@@ -1,0 +1,409 @@
+.harukietakeru {
+    padding: 48px 128px;
+    background: linear-gradient(90deg, hsl(281 61% 7% / 1) 0%, hsl(297 46% 7% / 1) 50%, hsl(0 69% 7% / 1) 100%) padding-box,
+                linear-gradient(90deg, #371056 0%, rgb(62, 17, 44) 50%, #561010 100%) border-box;
+    border: 2px solid transparent;
+}
+
+.harukietakeru h2 {
+    width: fit-content;
+    margin: 0 auto;
+    color: hsl(273 69% 70% / 1);
+}
+
+.harukietakeru h3 {
+    width: fit-content;
+    margin: 0 auto;
+    text-transform: uppercase;
+    font-size: 12px;
+    color: hsl(273 97% 95% / 1);
+}
+
+.harukietakeru hr {
+    margin: 7px auto;
+    width: 50%;
+    border-top: 1px solid hsl(273 69% 50% / 1);
+}
+
+/* --- STATS LAYOUT --- */
+.gojotwins-stats {
+    display: flex;
+}
+
+.gojotwins-stats > div {
+    width: 50%;
+}
+
+/* --- HARUKI STATS --- */
+.haruki-stats {
+  border: 1px solid #371056;
+  padding: 20px 30px;
+  display: flex; flex-direction: column; gap: 20px;
+  position: relative; z-index: 2;
+}
+
+.harukietakeru .haruki-stats .jjk-dossier-status-item {
+  display: grid !important;
+  grid-template-columns: 40px 1fr 70px !important;
+  align-items: center; gap: 20px;
+  border: none; background: transparent; margin: 0; padding: 0;
+  min-height: 0; width: 100%;
+}
+
+.harukietakeru .haruki-stats .jjk-dossier-status-label {
+  font-family: 'Cinzel', serif; font-size: 0.8em;
+  color: #bc81e9 !important;
+  text-align: right; letter-spacing: 1px;
+  background: transparent; border: none; margin: 0; padding: 0;
+  line-height: normal;
+}
+
+.harukietakeru .haruki-stats .jjk-dossier-status-value {
+  font-family: 'Inter', sans-serif; font-size: 0.85em;
+  color: #888 !important;
+  text-align: right; font-weight: 300;
+  white-space: nowrap;
+  background: transparent; border: none; margin: 0; padding: 0;
+  line-height: normal;
+}
+
+.harukietakeru .haruki-stats .jjk-dossier-status-bar-wrapper {
+  width: 100%; height: 4px;
+  background: #151515 !important;
+  border-radius: 0; overflow: hidden; border: none; margin: 0; padding: 0;
+  box-shadow: none;
+}
+
+.harukietakeru .haruki-stats .jjk-dossier-status-bar {
+  width: 100%; height: 100%; background: transparent; border: none; margin: 0; padding: 0; display: block;
+}
+
+.harukietakeru .haruki-stats .jjk-dossier-status-bar-fill { height: 100%; border-radius: 0; border: none; margin: 0; display: block; }
+.harukietakeru .haruki-stats .jjk-dossier-hp-fill { background: #5e2a2a !important; box-shadow: none !important; }
+.harukietakeru .haruki-stats .jjk-dossier-ea-fill { background: rgb(6, 82, 132) !important; box-shadow: none !important; }
+
+/* --- TAKERU STATS --- */
+.takeru-stats {
+  border: 1px solid #561010;
+  padding: 20px 30px;
+  display: flex; flex-direction: column; gap: 20px;
+  position: relative; z-index: 2;
+}
+
+.harukietakeru .takeru-stats .jjk-dossier-status-item {
+  display: grid !important;
+  grid-template-columns: 40px 1fr 70px !important;
+  align-items: center; gap: 20px;
+  border: none; background: transparent; margin: 0; padding: 0;
+  min-height: 0; width: 100%;
+}
+
+.harukietakeru .takeru-stats .jjk-dossier-status-label {
+  font-family: 'Cinzel', serif; font-size: 0.8em;
+  color: #e95d5d !important;
+  text-align: right; letter-spacing: 1px;
+  background: transparent; border: none; margin: 0; padding: 0;
+  line-height: normal;
+}
+
+.harukietakeru .takeru-stats .jjk-dossier-status-value {
+  font-family: 'Inter', sans-serif; font-size: 0.85em;
+  color: #888 !important;
+  text-align: right; font-weight: 300;
+  white-space: nowrap;
+  background: transparent; border: none; margin: 0; padding: 0;
+  line-height: normal;
+}
+
+.harukietakeru .takeru-stats .jjk-dossier-status-bar-wrapper {
+  width: 100%; height: 4px;
+  background: #151515 !important;
+  border-radius: 0; overflow: hidden; border: none; margin: 0; padding: 0;
+  box-shadow: none;
+}
+
+.harukietakeru .takeru-stats .jjk-dossier-status-bar {
+  width: 100%; height: 100%; background: transparent; border: none; margin: 0; padding: 0; display: block;
+}
+
+.harukietakeru .takeru-stats .jjk-dossier-status-bar-fill { height: 100%; border-radius: 0; border: none; margin: 0; display: block; }
+.harukietakeru .takeru-stats .jjk-dossier-hp-fill { background: #5e2a2a !important; box-shadow: none !important; }
+.harukietakeru .takeru-stats .jjk-dossier-ea-fill { background: rgb(6, 82, 132) !important; box-shadow: none !important; }
+
+/* Responsivo */
+@media (max-width: 600px) {
+  .haruki-stats,
+  .takeru-stats { padding: 15px; }
+  .harukietakeru .haruki-stats .jjk-dossier-status-item,
+  .harukietakeru .takeru-stats .jjk-dossier-status-item { grid-template-columns: 40px 1fr 65px !important; gap: 10px; }
+}
+
+/* Counters Section */
+.haruki-counter-section {
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  row-gap: 20px;
+  margin: 25px 0;
+  padding: 20px;
+  flex-wrap: wrap;
+}
+
+.haruki-counter-item {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.haruki-counter-value {
+  font-family: 'Times New Roman', serif;
+  font-size: 2.5em;
+  font-weight: bold;
+  color: #ffffff;
+  line-height: 1;
+  letter-spacing: 1px;
+}
+
+.haruki-counter-label {
+  font-family: 'Times New Roman', serif;
+  font-size: 0.9em;
+  font-weight: 400;
+  color: #d3d3d3;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  max-width: 120px;
+}
+
+@media (min-width:961px) and (max-width:1280px) {
+  .haruki-counter-value { font-size: 1.6em; }
+  .haruki-counter-label { font-size: 0.65em; }
+  .harukietakeru { padding: 36px 64px; }
+}
+
+@media (min-width:840px) and (max-width: 960px) {
+  .haruki-counter-section { gap: 25px; padding: 15px; }
+  .haruki-counter-value { font-size: 2em; }
+  .haruki-counter-label { font-size: 0.75em; }
+}
+
+@media (max-width: 840px) {
+  .haruki-counter-value { font-size: 1.5em; }
+  .haruki-counter-label { font-size: 0.6em; }
+  .harukietakeru { padding: 18px 48px; }
+}
+
+/* Falas e pensamentos */
+.haruki-speaks {
+    color: hsl(276 70% 72% / 1);
+    font-weight: 700;
+}
+
+.haruki-thinks {
+    color: hsl(276 70% 80% / 1);
+    font-style: italic;
+}
+
+.takeru-speaks {
+    color: rgb(224, 71, 71);
+    font-weight: 700;
+}
+
+.takeru-thinks {
+    color: rgb(253, 112, 112);
+    font-style: italic;
+}
+
+/* Considerações */
+:root {
+  interpolate-size: allow-keywords;
+}
+
+.harukietakeru details {
+  border: 1px solid #371056;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  border-top: 0;
+}
+
+.harukietakeru details:hover {
+  background: #3610566c;
+}
+
+.harukietakeru details[open] {
+  background: #3710561a;
+}
+
+.harukietakeru .takeru-details {
+    border: 1px solid #561010;
+}
+
+.harukietakeru .takeru-details:hover {
+  background: #5610106c;
+}
+
+.harukietakeru .takeru-details[open] {
+  background: #5610101a;
+}
+
+/* Summary Styling */
+.harukietakeru summary {
+  padding: 1rem 1.5rem;
+  cursor: pointer;
+  font-weight: 600;
+  list-style: none;
+  position: relative;
+  user-select: none;
+  transition: all 0.3s ease;
+}
+
+.harukietakeru summary::-webkit-details-marker {
+  display: none;
+}
+
+.harukietakeru summary::after {
+  content: "▼";
+  position: absolute;
+  right: 1.5rem;
+  transition: transform 0.3s ease;
+  opacity: 0.7;
+  font-size: 0.75em;
+}
+
+.harukietakeru details[open] summary::after {
+  transform: rotate(-180deg);
+}
+
+/* Grid-based slide animation */
+.harukietakeru .accordion-content {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.4s ease, opacity 0.4s ease;
+  opacity: 0;
+  padding: 0 40px;
+}
+
+.harukietakeru details[open] .accordion-content {
+  grid-template-rows: 1fr;
+  opacity: 1;
+}
+
+.harukietakeru .accordion-content > div {
+  overflow: hidden;
+}
+
+.harukietakeru .accordion-content p {
+  padding: 0 1.5rem 1.5rem;
+  margin: 0;
+  transform: translateY(-10px);
+  transition: transform 0.4s ease 0.1s;
+}
+
+.harukietakeru details[open] .accordion-content p {
+  transform: translateY(0);
+}
+
+/* Alternative using details-content (modern browsers) */
+.harukietakeru details::details-content {
+  block-size: 0;
+  opacity: 0;
+  transition: block-size 0.4s ease, opacity 0.4s ease, content-visibility 0.4s allow-discrete;
+  transition-behavior: allow-discrete;
+}
+
+.harukietakeru details[open]::details-content {
+  block-size: auto;
+  opacity: 1;
+}
+
+.harukietakeru details[open] .accordion-content .spoiler {
+  padding: 10px;
+}
+
+/* Nested details */
+.harukietakeru details details {
+  margin: 0.5rem 16px;
+  border: 1px solid #371056;
+  border-radius: 4px;
+  padding: 0;
+}
+
+.harukietakeru details details > summary {
+  cursor: pointer;
+  list-style: none;
+  padding: 0.5rem 0.75rem;
+  position: relative;
+}
+
+.harukietakeru details details > summary::-webkit-details-marker {
+  display: none;
+}
+
+.harukietakeru details details > summary::marker {
+  content: "";
+}
+
+.harukietakeru details details > summary::after {
+  display: none;
+}
+
+.harukietakeru details details > summary::before {
+  content: "▶";
+  display: inline-block;
+  margin-right: 0.5rem;
+  font-size: 0.65em;
+  transition: transform 150ms;
+}
+
+.harukietakeru details details[open] > summary::before {
+  transform: rotate(90deg);
+}
+
+/* Carry items */
+.haruki-carry-item {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  border: 1px solid #371056;
+  border-radius: 4px;
+  padding: 10px;
+  margin-bottom: 8px;
+  font-size: 0.85em;
+  line-height: 1.4;
+}
+
+.haruki-carry-img {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  border: 1px solid #371056;
+  border-radius: 3px;
+  flex-shrink: 0;
+}
+
+.haruki-carry-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.harukietakeru audio::-webkit-media-controls-current-time-display,
+.harukietakeru audio::-webkit-media-controls-timeline,
+.harukietakeru audio::-webkit-media-controls-time-remaining-display {
+  display: none;
+}
+
+.harukietakeru audio::-webkit-media-controls-enclosure {
+  background-color: transparent;
+}
+
+.harukietakeru audio::-webkit-media-controls-play-button,
+.harukietakeru audio::-webkit-media-controls-volume-slider,
+.harukietakeru audio::-webkit-media-controls-mute-button {
+  filter: invert(1) opacity(0.8);
+}
+
+.harukietakeru > .music-player {
+  display: flex;
+  align-items: center;
+  font-style: italic;
+}

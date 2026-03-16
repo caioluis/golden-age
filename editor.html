@@ -8,9 +8,16 @@
     <link href="editor.css" rel="stylesheet" type="text/css">
 </head>
 <body>
+    <!-- Tab Navigation -->
+    <div class="tab-nav">
+        <button class="tab-btn tab-active" data-tab="tab-haruki">Haruki</button>
+        <button class="tab-btn" data-tab="tab-harukietakeru">Haruki &amp; Takeru</button>
+    </div>
+
+    <!-- Tab 1: Haruki -->
+    <div id="tab-haruki" class="tab-panel tab-panel-active">
     <div class="editor-layout">
     <div class="editor-container">
-
 
         <form id="editorForm" class="editor-form">
             <!-- Title & Subtitle Section -->
@@ -95,7 +102,7 @@
                             <input type="number" id="acoesOfensivasMax" class="editor-input status-input" placeholder="3" min="0" value="3">
                         </div>
                     </div>
-    
+
                     <div class="status-input-group">
                         <label class="editor-label">Ações Defensivas</label>
                         <div class="status-inputs">
@@ -104,7 +111,7 @@
                             <input type="number" id="acoesDefensivasMax" class="editor-input status-input" placeholder="3" min="0" value="3">
                         </div>
                     </div>
-    
+
                     <div class="status-input-group">
                         <label class="editor-label">Ações de Suporte</label>
                         <div class="status-inputs">
@@ -113,7 +120,7 @@
                             <input type="number" id="acoesSuporteMax" class="editor-input status-input" placeholder="2" min="0" value="2">
                         </div>
                     </div>
-    
+
                     <div class="status-input-group">
                         <label class="editor-label">Ação Livre</label>
                         <div class="status-inputs">
@@ -204,8 +211,223 @@
         <div id="equipmentList" class="equipment-list"></div>
     </div>
     </div><!-- end editor-layout -->
+    </div><!-- end tab-haruki -->
 
-    <!-- Import Modal -->
+    <!-- Tab 2: Haruki & Takeru -->
+    <div id="tab-harukietakeru" class="tab-panel">
+    <div class="editor-layout">
+    <div class="editor-container">
+
+        <form id="htEditorForm" class="editor-form">
+            <!-- Title & Subtitle Section -->
+            <div class="editor-section">
+                <div class="side-by-side">
+                    <div class="side-by-side-item">
+                        <label for="ht-title" class="editor-label">Título (h2)</label>
+                        <input type="text" id="ht-title" class="editor-input" placeholder="Enter title..." maxlength="100">
+                    </div>
+                    <div class="side-by-side-item">
+                        <label for="ht-subtitle" class="editor-label">Subtitle (h3)</label>
+                        <input type="text" id="ht-subtitle" class="editor-input" placeholder="Enter subtitle..." maxlength="150">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Narrative Section -->
+            <div class="editor-section">
+                <label for="ht-narrative" class="editor-label">Narrative Text</label>
+                <textarea id="ht-narrative" class="editor-input editor-textarea" placeholder="Write your narrative here...&#10;&#10;Use the buttons below to wrap selected text."></textarea>
+
+                <div class="text-controls">
+                    <button type="button" id="ht-btnSpeech" class="editor-button text-control-button">Haruki Speech</button>
+                    <button type="button" id="ht-btnTakeruSpeech" class="editor-button text-control-button">Takeru Speech</button>
+                    <button type="button" id="ht-btnThought" class="editor-button text-control-button">Add Thought</button>
+                    <button type="button" id="ht-btnClearFormat" class="editor-button text-control-button">Clear Formatting</button>
+                </div>
+                <p class="editor-hint">Select text in the narrative box, then click a button to wrap it.</p>
+
+                <div class="music-controls">
+                    <div class="music-inputs">
+                        <input type="text" id="ht-musicLabel" class="editor-input music-input" placeholder="Label (e.g. Theme Song)">
+                        <input type="text" id="ht-musicUrl" class="editor-input music-input" placeholder="Audio URL">
+                    </div>
+                    <button type="button" id="ht-btnMusic" class="editor-button text-control-button">Add Music</button>
+                </div>
+            </div>
+
+            <!-- Status Bars Section -->
+            <div class="editor-section">
+                <h3 class="section-title">Status Bars</h3>
+
+                <h4 class="char-subtitle">Haruki</h4>
+                <div class="status-groups-wrapper">
+                    <div class="status-input-group">
+                        <label class="editor-label">HP</label>
+                        <div class="status-inputs">
+                            <input type="number" id="ht-h-hpCurrent" class="editor-input status-input" placeholder="Current" min="0">
+                            <span class="input-separator">/</span>
+                            <input type="number" id="ht-h-hpMax" class="editor-input status-input" placeholder="Max" min="0">
+                        </div>
+                    </div>
+                    <div class="status-input-group">
+                        <label class="editor-label">EA</label>
+                        <div class="status-inputs">
+                            <input type="number" id="ht-h-eaCurrent" class="editor-input status-input" placeholder="Current" min="0">
+                            <span class="input-separator">/</span>
+                            <input type="number" id="ht-h-eaMax" class="editor-input status-input" placeholder="Max" min="0">
+                        </div>
+                    </div>
+                    <div class="status-input-group">
+                        <label class="editor-label">SAN</label>
+                        <div class="status-inputs">
+                            <input type="number" id="ht-h-sanCurrent" class="editor-input status-input" placeholder="Current" min="0">
+                            <span class="input-separator">/</span>
+                            <input type="number" id="ht-h-sanMax" class="editor-input status-input" placeholder="Max" min="0">
+                        </div>
+                    </div>
+                </div>
+
+                <h4 class="char-subtitle">Takeru</h4>
+                <div class="status-groups-wrapper">
+                    <div class="status-input-group">
+                        <label class="editor-label">HP</label>
+                        <div class="status-inputs">
+                            <input type="number" id="ht-t-hpCurrent" class="editor-input status-input" placeholder="Current" min="0">
+                            <span class="input-separator">/</span>
+                            <input type="number" id="ht-t-hpMax" class="editor-input status-input" placeholder="Max" min="0">
+                        </div>
+                    </div>
+                    <div class="status-input-group">
+                        <label class="editor-label">EA</label>
+                        <div class="status-inputs">
+                            <input type="number" id="ht-t-eaCurrent" class="editor-input status-input" placeholder="Current" min="0">
+                            <span class="input-separator">/</span>
+                            <input type="number" id="ht-t-eaMax" class="editor-input status-input" placeholder="Max" min="0">
+                        </div>
+                    </div>
+                    <div class="status-input-group">
+                        <label class="editor-label">SAN</label>
+                        <div class="status-inputs">
+                            <input type="number" id="ht-t-sanCurrent" class="editor-input status-input" placeholder="Current" min="0">
+                            <span class="input-separator">/</span>
+                            <input type="number" id="ht-t-sanMax" class="editor-input status-input" placeholder="Max" min="0">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Combat Actions Section -->
+            <div class="editor-section">
+                <h3 class="section-title">Ações em Combate</h3>
+                <div class="status-groups-wrapper">
+                    <div class="status-input-group">
+                        <label class="editor-label">Ações Ofensivas</label>
+                        <div class="status-inputs">
+                            <input type="number" id="ht-acoesOfensivasCurrent" class="editor-input status-input" placeholder="0" min="0" max="3" value="0">
+                            <span class="input-separator">/</span>
+                            <input type="number" id="ht-acoesOfensivasMax" class="editor-input status-input" placeholder="3" min="0" value="3">
+                        </div>
+                    </div>
+                    <div class="status-input-group">
+                        <label class="editor-label">Ações Defensivas</label>
+                        <div class="status-inputs">
+                            <input type="number" id="ht-acoesDefensivasCurrent" class="editor-input status-input" placeholder="0" min="0" max="3" value="0">
+                            <span class="input-separator">/</span>
+                            <input type="number" id="ht-acoesDefensivasMax" class="editor-input status-input" placeholder="3" min="0" value="3">
+                        </div>
+                    </div>
+                    <div class="status-input-group">
+                        <label class="editor-label">Ações de Suporte</label>
+                        <div class="status-inputs">
+                            <input type="number" id="ht-acoesSuporteCurrent" class="editor-input status-input" placeholder="0" min="0" max="2" value="0">
+                            <span class="input-separator">/</span>
+                            <input type="number" id="ht-acoesSuporteMax" class="editor-input status-input" placeholder="2" min="0" value="2">
+                        </div>
+                    </div>
+                    <div class="status-input-group">
+                        <label class="editor-label">Ação Livre</label>
+                        <div class="status-inputs">
+                            <input type="number" id="ht-acaoLivreCurrent" class="editor-input status-input" placeholder="0" min="0" max="1" value="0">
+                            <span class="input-separator">/</span>
+                            <input type="number" id="ht-acaoLivreMax" class="editor-input status-input" placeholder="1" min="0" value="1">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Metadata Section -->
+            <div class="editor-section">
+                <h3 class="section-title">Metadata</h3>
+                <div class="metadata-grid">
+                    <div class="metadata-item metadata-narrow">
+                        <label for="ht-wordCount" class="editor-label">Words</label>
+                        <input type="number" id="ht-wordCount" class="editor-input" placeholder="447" min="0">
+                    </div>
+                    <div class="metadata-item metadata-narrow">
+                        <label for="ht-postCurrent" class="editor-label">Turno</label>
+                        <input type="text" id="ht-postCurrent" class="editor-input" placeholder="1">
+                    </div>
+                    <div class="metadata-item metadata-narrow">
+                        <label for="ht-postMax" class="editor-label">Turno Max</label>
+                        <input type="text" id="ht-postMax" class="editor-input" placeholder="??">
+                    </div>
+                    <div class="metadata-item">
+                        <label for="ht-objetivo" class="editor-label">Objetivo</label>
+                        <input type="text" id="ht-objetivo" class="editor-input" placeholder="Enter objective...">
+                    </div>
+                    <div class="metadata-item">
+                        <label for="ht-modificadores" class="editor-label">Modificadores</label>
+                        <input type="text" id="ht-modificadores" class="editor-input" placeholder="Ex: +300% da Era Dourada">
+                    </div>
+                    <div class="metadata-item full-width">
+                        <label for="ht-principaisAcoes" class="editor-label">Principais ações no turno</label>
+                        <textarea id="ht-principaisAcoes" class="editor-input" placeholder="Enter main actions in the turn..." rows="3"></textarea>
+                    </div>
+                    <div class="metadata-item">
+                        <label for="ht-obs" class="editor-label">Obs.</label>
+                        <textarea id="ht-obs" class="editor-input" placeholder="Enter observations..." rows="3"></textarea>
+                    </div>
+                    <div class="metadata-item">
+                        <label for="ht-aptidoes" class="editor-label">Aptidões Usadas</label>
+                        <textarea id="ht-aptidoes" class="editor-input" placeholder="Enter aptitudes used..." rows="3"></textarea>
+                    </div>
+                    <div class="metadata-item">
+                        <label for="ht-bonificacoes" class="editor-label">Bonificações de status</label>
+                        <textarea id="ht-bonificacoes" class="editor-input" placeholder="Enter status bonuses..." rows="3"></textarea>
+                    </div>
+                    <div class="metadata-item full-width">
+                        <label for="ht-tecnicas" class="editor-label">Técnicas Usadas</label>
+                        <textarea id="ht-tecnicas" class="editor-input" placeholder="Enter techniques used..." rows="4"></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="editor-actions">
+                <button type="button" id="ht-btnGenerate" class="editor-button editor-button-primary">Generate & Copy HTML</button>
+                <button type="button" id="ht-btnImport" class="editor-button editor-button-secondary">Import Code</button>
+                <button type="button" id="ht-btnClear" class="editor-button editor-button-secondary">Clear All</button>
+            </div>
+
+            <!-- Status Message -->
+            <div id="ht-statusMessage" class="status-message" style="display: none;"></div>
+        </form>
+    </div>
+
+    <!-- HT Equipment Panel -->
+    <div class="equipment-panel" id="htEquipmentPanel">
+        <div class="equipment-header">
+            <h2>Inventário</h2>
+            <span id="ht-autoSaveIndicator" class="auto-save-indicator"></span>
+        </div>
+        <textarea id="ht-htmlPasteArea" class="editor-input eq-paste-area" placeholder="Paste your secundary.html code here..."></textarea>
+        <button type="button" id="ht-btnParseHtml" class="editor-button equipment-load-btn">Parse Inventory</button>
+        <div id="ht-equipmentList" class="equipment-list"></div>
+    </div>
+    </div><!-- end editor-layout -->
+    </div><!-- end tab-harukietakeru -->
+
+    <!-- Import Modal (Tab 1) -->
     <div id="importModal" class="modal-overlay" style="display: none;">
         <div class="modal-content">
             <h2 class="modal-title">Import Generated Code</h2>
@@ -214,6 +436,19 @@
             <div class="modal-actions">
                 <button type="button" id="btnImportConfirm" class="editor-button editor-button-primary">Import</button>
                 <button type="button" id="btnImportCancel" class="editor-button editor-button-secondary">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Import Modal (Tab 2) -->
+    <div id="ht-importModal" class="modal-overlay" style="display: none;">
+        <div class="modal-content">
+            <h2 class="modal-title">Import Generated Code</h2>
+            <p class="modal-hint">Paste a previously generated harukietakeru HTML code below to populate the editor fields.</p>
+            <textarea id="ht-importCodeArea" class="editor-input modal-textarea" placeholder="Paste your generated HTML code here..."></textarea>
+            <div class="modal-actions">
+                <button type="button" id="ht-btnImportConfirm" class="editor-button editor-button-primary">Import</button>
+                <button type="button" id="ht-btnImportCancel" class="editor-button editor-button-secondary">Cancel</button>
             </div>
         </div>
     </div>

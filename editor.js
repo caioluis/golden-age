@@ -79,18 +79,20 @@ class TextWrapper {
 // ============================================================================
 
 class StorageManager {
-    constructor() {
-        this.storageKey = "golden-age-editor-state";
+    constructor(storageKey = "golden-age-editor-state", indicatorId = "autoSaveIndicator") {
+        this.storageKey = storageKey;
         this.saveTimeout = null;
-        this.indicator = document.getElementById("autoSaveIndicator");
+        this.indicator = document.getElementById(indicatorId);
     }
 
     scheduleSave(data) {
         clearTimeout(this.saveTimeout);
 
         // Show saving indicator
-        this.indicator.textContent = "Saving...";
-        this.indicator.classList.add("saving");
+        if (this.indicator) {
+            this.indicator.textContent = "Saving...";
+            this.indicator.classList.add("saving");
+        }
 
         this.saveTimeout = setTimeout(() => {
             try {
@@ -103,13 +105,16 @@ class StorageManager {
                 this.showSaveIndicator();
             } catch (error) {
                 console.error("Error saving to localStorage:", error);
-                this.indicator.textContent = "Save failed";
-                this.indicator.classList.remove("saving");
+                if (this.indicator) {
+                    this.indicator.textContent = "Save failed";
+                    this.indicator.classList.remove("saving");
+                }
             }
         }, 500);
     }
 
     showSaveIndicator() {
+        if (!this.indicator) return;
         this.indicator.textContent = "Auto-saved";
         this.indicator.classList.remove("saving");
 
@@ -857,6 +862,280 @@ function importGeneratedCode(htmlString) {
 }
 
 // ============================================================================
+// HT (Haruki & Takeru) - Globals, Generator, and Form Helpers
+// ============================================================================
+
+let htSelectedEquipment = {};
+let htParsedItems = [];
+let htCarregandoRawOverride = null;
+let htHpPercentOverride = null;
+let htEaPercentOverride = null;
+let htSanPercentOverride = null;
+let htHpTPercentOverride = null;
+let htEaTPercentOverride = null;
+let htSanTPercentOverride = null;
+
+// HT instances (initialized in DOMContentLoaded)
+let htStorageManager = null;
+let htmlGeneratorHT = null;
+
+function showHTStatusMessage(message, type = "success") {
+    const statusDiv = document.getElementById("ht-statusMessage");
+    statusDiv.textContent = message;
+    statusDiv.className = "status-message status-" + type;
+    statusDiv.style.display = "block";
+    setTimeout(() => { statusDiv.style.display = "none"; }, 5000);
+}
+
+class HTMLGeneratorHT {
+    constructor() {
+        this.template = `<link href="https://caioluis.github.io/golden-age/template.css" rel="stylesheet" type="text/css"><div class="haruki harukietakeru"><h2>{{TITLE}}</h2><h3>{{SUBTITLE}}</h3><hr/>
+{{NARRATIVE}}
+
+<div class="gojotwins-stats"><div class="haruki-stats"> <div class="jjk-dossier-status-item"> <span class="jjk-dossier-status-label">HP</span> <div class="jjk-dossier-status-bar-wrapper"> <div class="jjk-dossier-status-bar"><div class="jjk-dossier-status-bar-fill jjk-dossier-hp-fill" style="width: {{H_HP_PERCENT}}%;"></div></div> </div> <span class="jjk-dossier-status-value">{{H_HP_CURRENT}} / {{H_HP_MAX}}</span> </div> <div class="jjk-dossier-status-item"> <span class="jjk-dossier-status-label">EA</span> <div class="jjk-dossier-status-bar-wrapper"> <div class="jjk-dossier-status-bar"><div class="jjk-dossier-status-bar-fill jjk-dossier-ea-fill" style="width: {{H_EA_PERCENT}}%;"></div></div> </div> <span class="jjk-dossier-status-value">{{H_EA_CURRENT}} / {{H_EA_MAX}}</span> </div> <div class="jjk-dossier-status-item"> <span class="jjk-dossier-status-label">SAN</span> <div class="jjk-dossier-status-bar-wrapper"> <div class="jjk-dossier-status-bar"><div class="jjk-dossier-status-bar-fill" style="width: {{H_SAN_PERCENT}}%; background-color: #d3d3d3;"></div></div> </div> <span class="jjk-dossier-status-value">{{H_SAN_CURRENT}} / {{H_SAN_MAX}}</span> </div> </div><div class="takeru-stats"> <div class="jjk-dossier-status-item"> <span class="jjk-dossier-status-label">HP</span> <div class="jjk-dossier-status-bar-wrapper"> <div class="jjk-dossier-status-bar"><div class="jjk-dossier-status-bar-fill jjk-dossier-hp-fill" style="width: {{T_HP_PERCENT}}%;"></div></div> </div> <span class="jjk-dossier-status-value">{{T_HP_CURRENT}} / {{T_HP_MAX}}</span> </div> <div class="jjk-dossier-status-item"> <span class="jjk-dossier-status-label">EA</span> <div class="jjk-dossier-status-bar-wrapper"> <div class="jjk-dossier-status-bar"><div class="jjk-dossier-status-bar-fill jjk-dossier-ea-fill" style="width: {{T_EA_PERCENT}}%;"></div></div> </div> <span class="jjk-dossier-status-value">{{T_EA_CURRENT}} / {{T_EA_MAX}}</span> </div> <div class="jjk-dossier-status-item"> <span class="jjk-dossier-status-label">SAN</span> <div class="jjk-dossier-status-bar-wrapper"> <div class="jjk-dossier-status-bar"><div class="jjk-dossier-status-bar-fill" style="width: {{T_SAN_PERCENT}}%; background-color: #d3d3d3;"></div></div> </div> <span class="jjk-dossier-status-value">{{T_SAN_CURRENT}} / {{T_SAN_MAX}}</span> </div> </div></div><details class="harukietakeru"><summary>Considerações</summary><div class="accordion-content"><div><p><div class="haruki-counter-section"><div class="haruki-counter-item"><div class="haruki-counter-value">{{WORD_COUNT}}</div><div class="haruki-counter-label">Palavras</div></div><div class="haruki-counter-item"><div class="haruki-counter-value">{{POST_CURRENT}}/{{POST_MAX}}</div><div class="haruki-counter-label">Turno</div></div><div class="haruki-counter-item"><div class="haruki-counter-value">{{ACOES_OFENSIVAS_CURRENT}}/{{ACOES_OFENSIVAS_MAX}}</div><div class="haruki-counter-label">Ofensivas</div></div><div class="haruki-counter-item"><div class="haruki-counter-value">{{ACOES_DEFENSIVAS_CURRENT}}/{{ACOES_DEFENSIVAS_MAX}}</div><div class="haruki-counter-label">Defensivas</div></div><div class="haruki-counter-item"><div class="haruki-counter-value">{{ACOES_SUPORTE_CURRENT}}/{{ACOES_SUPORTE_MAX}}</div><div class="haruki-counter-label">Suporte</div></div><div class="haruki-counter-item"><div class="haruki-counter-value">{{ACAO_LIVRE_CURRENT}}/{{ACAO_LIVRE_MAX}}</div><div class="haruki-counter-label">Livre</div></div></div>
+[b]Objetivo:[/b] {{OBJETIVO}}
+[b]Principais ações no turno:[/b] {{PRINCIPAIS_ACOES}}
+[b]Obs.:[/b] {{OBS}}
+[b]Aptidões Usadas:[/b] {{APTIDOES}}
+[b]Modificadores:[/b] {{MODIFICADORES}}
+<details><summary>Carregando consigo</summary><div class="accordion-content"><div>{{CARREGANDO}}</div></div></details><details><summary>Bonificações de status</summary><div class="accordion-content"><div><p>{{BONIFICACOES}}</p></div></div></details><details><summary>Técnicas Usadas</summary><div class="accordion-content"><div><p>{{TECNICAS}}</p></div></div></details>
+</details>
+</div>`;
+    }
+
+    calcPercent(current, max, override) {
+        if (override !== null && override !== undefined) return override;
+        const c = parseFloat(current);
+        const m = parseFloat(max);
+        if (!m || isNaN(c) || isNaN(m)) return "100";
+        return Math.round((c / m) * 100).toString();
+    }
+
+    generate(formData) {
+        let html = this.template
+            .replace("{{TITLE}}", formData.title)
+            .replace("{{SUBTITLE}}", formData.subtitle)
+            .replace("{{NARRATIVE}}", this.processNarrative(formData.narrative))
+            .replace("{{H_HP_PERCENT}}", this.calcPercent(formData.hHpCurrent, formData.hHpMax, formData.hHpPercent))
+            .replace("{{H_HP_CURRENT}}", formData.hHpCurrent)
+            .replace("{{H_HP_MAX}}", formData.hHpMax)
+            .replace("{{H_EA_PERCENT}}", this.calcPercent(formData.hEaCurrent, formData.hEaMax, formData.hEaPercent))
+            .replace("{{H_EA_CURRENT}}", formData.hEaCurrent)
+            .replace("{{H_EA_MAX}}", formData.hEaMax)
+            .replace("{{H_SAN_PERCENT}}", this.calcPercent(formData.hSanCurrent, formData.hSanMax, formData.hSanPercent))
+            .replace("{{H_SAN_CURRENT}}", formData.hSanCurrent)
+            .replace("{{H_SAN_MAX}}", formData.hSanMax)
+            .replace("{{T_HP_PERCENT}}", this.calcPercent(formData.tHpCurrent, formData.tHpMax, formData.tHpPercent))
+            .replace("{{T_HP_CURRENT}}", formData.tHpCurrent)
+            .replace("{{T_HP_MAX}}", formData.tHpMax)
+            .replace("{{T_EA_PERCENT}}", this.calcPercent(formData.tEaCurrent, formData.tEaMax, formData.tEaPercent))
+            .replace("{{T_EA_CURRENT}}", formData.tEaCurrent)
+            .replace("{{T_EA_MAX}}", formData.tEaMax)
+            .replace("{{T_SAN_PERCENT}}", this.calcPercent(formData.tSanCurrent, formData.tSanMax, formData.tSanPercent))
+            .replace("{{T_SAN_CURRENT}}", formData.tSanCurrent)
+            .replace("{{T_SAN_MAX}}", formData.tSanMax)
+            .replace("{{ACOES_OFENSIVAS_CURRENT}}", formData.acoesOfensivasCurrent)
+            .replace("{{ACOES_OFENSIVAS_MAX}}", formData.acoesOfensivasMax)
+            .replace("{{ACOES_DEFENSIVAS_CURRENT}}", formData.acoesDefensivasCurrent)
+            .replace("{{ACOES_DEFENSIVAS_MAX}}", formData.acoesDefensivasMax)
+            .replace("{{ACOES_SUPORTE_CURRENT}}", formData.acoesSuporteCurrent)
+            .replace("{{ACOES_SUPORTE_MAX}}", formData.acoesSuporteMax)
+            .replace("{{ACAO_LIVRE_CURRENT}}", formData.acaoLivreCurrent)
+            .replace("{{ACAO_LIVRE_MAX}}", formData.acaoLivreMax)
+            .replace("{{WORD_COUNT}}", formData.wordCount)
+            .replace("{{POST_CURRENT}}", formData.postCurrent)
+            .replace("{{POST_MAX}}", formData.postMax)
+            .replace("{{OBJETIVO}}", formData.objetivo)
+            .replace("{{PRINCIPAIS_ACOES}}", formData.principaisAcoes)
+            .replace("{{OBS}}", formData.obs)
+            .replace("{{APTIDOES}}", formData.aptidoes)
+            .replace("{{MODIFICADORES}}", formData.modificadores)
+            .replace("{{CARREGANDO}}", formData.carregando)
+            .replace("{{BONIFICACOES}}", formData.bonificacoes)
+            .replace("{{TECNICAS}}", formData.tecnicas);
+        return html;
+    }
+
+    processNarrative(text) {
+        const paragraphs = text.split("\n\n").map(p => p.trim()).filter(p => p.length > 0);
+        return paragraphs.join("\n\n");
+    }
+}
+
+function getFormDataHT() {
+    return {
+        title: document.getElementById("ht-title").value,
+        subtitle: document.getElementById("ht-subtitle").value,
+        narrative: document.getElementById("ht-narrative").value,
+        hHpCurrent: document.getElementById("ht-h-hpCurrent").value,
+        hHpMax: document.getElementById("ht-h-hpMax").value,
+        hHpPercent: htHpPercentOverride,
+        hEaCurrent: document.getElementById("ht-h-eaCurrent").value,
+        hEaMax: document.getElementById("ht-h-eaMax").value,
+        hEaPercent: htEaPercentOverride,
+        hSanCurrent: document.getElementById("ht-h-sanCurrent").value,
+        hSanMax: document.getElementById("ht-h-sanMax").value,
+        hSanPercent: htSanPercentOverride,
+        tHpCurrent: document.getElementById("ht-t-hpCurrent").value,
+        tHpMax: document.getElementById("ht-t-hpMax").value,
+        tHpPercent: htHpTPercentOverride,
+        tEaCurrent: document.getElementById("ht-t-eaCurrent").value,
+        tEaMax: document.getElementById("ht-t-eaMax").value,
+        tEaPercent: htEaTPercentOverride,
+        tSanCurrent: document.getElementById("ht-t-sanCurrent").value,
+        tSanMax: document.getElementById("ht-t-sanMax").value,
+        tSanPercent: htSanTPercentOverride,
+        acoesOfensivasCurrent: document.getElementById("ht-acoesOfensivasCurrent").value,
+        acoesOfensivasMax: document.getElementById("ht-acoesOfensivasMax").value,
+        acoesDefensivasCurrent: document.getElementById("ht-acoesDefensivasCurrent").value,
+        acoesDefensivasMax: document.getElementById("ht-acoesDefensivasMax").value,
+        acoesSuporteCurrent: document.getElementById("ht-acoesSuporteCurrent").value,
+        acoesSuporteMax: document.getElementById("ht-acoesSuporteMax").value,
+        acaoLivreCurrent: document.getElementById("ht-acaoLivreCurrent").value,
+        acaoLivreMax: document.getElementById("ht-acaoLivreMax").value,
+        wordCount: document.getElementById("ht-wordCount").value,
+        postCurrent: document.getElementById("ht-postCurrent").value,
+        postMax: document.getElementById("ht-postMax").value,
+        objetivo: document.getElementById("ht-objetivo").value,
+        principaisAcoes: document.getElementById("ht-principaisAcoes").value,
+        obs: document.getElementById("ht-obs").value,
+        aptidoes: document.getElementById("ht-aptidoes").value,
+        modificadores: document.getElementById("ht-modificadores").value,
+        bonificacoes: document.getElementById("ht-bonificacoes").value,
+        tecnicas: document.getElementById("ht-tecnicas").value,
+        carregando: htCarregandoRawOverride !== null ? htCarregandoRawOverride : buildCarregandoTextHT(),
+        carregandoRawOverride: htCarregandoRawOverride,
+        parsedItems: htParsedItems,
+        selectedEquipment: htSelectedEquipment,
+    };
+}
+
+function setFormDataHT(data) {
+    if (!data) return;
+    document.getElementById("ht-title").value = data.title || "";
+    document.getElementById("ht-subtitle").value = data.subtitle || "";
+    document.getElementById("ht-narrative").value = data.narrative || "";
+    document.getElementById("ht-h-hpCurrent").value = data.hHpCurrent || "";
+    document.getElementById("ht-h-hpMax").value = data.hHpMax || "";
+    document.getElementById("ht-h-eaCurrent").value = data.hEaCurrent || "";
+    document.getElementById("ht-h-eaMax").value = data.hEaMax || "";
+    document.getElementById("ht-h-sanCurrent").value = data.hSanCurrent || "";
+    document.getElementById("ht-h-sanMax").value = data.hSanMax || "";
+    document.getElementById("ht-t-hpCurrent").value = data.tHpCurrent || "";
+    document.getElementById("ht-t-hpMax").value = data.tHpMax || "";
+    document.getElementById("ht-t-eaCurrent").value = data.tEaCurrent || "";
+    document.getElementById("ht-t-eaMax").value = data.tEaMax || "";
+    document.getElementById("ht-t-sanCurrent").value = data.tSanCurrent || "";
+    document.getElementById("ht-t-sanMax").value = data.tSanMax || "";
+    document.getElementById("ht-acoesOfensivasCurrent").value = data.acoesOfensivasCurrent || "0";
+    document.getElementById("ht-acoesOfensivasMax").value = data.acoesOfensivasMax || "3";
+    document.getElementById("ht-acoesDefensivasCurrent").value = data.acoesDefensivasCurrent || "0";
+    document.getElementById("ht-acoesDefensivasMax").value = data.acoesDefensivasMax || "3";
+    document.getElementById("ht-acoesSuporteCurrent").value = data.acoesSuporteCurrent || "0";
+    document.getElementById("ht-acoesSuporteMax").value = data.acoesSuporteMax || "2";
+    document.getElementById("ht-acaoLivreCurrent").value = data.acaoLivreCurrent || "0";
+    document.getElementById("ht-acaoLivreMax").value = data.acaoLivreMax || "1";
+    document.getElementById("ht-wordCount").value = data.wordCount || "";
+    document.getElementById("ht-postCurrent").value = data.postCurrent || "";
+    document.getElementById("ht-postMax").value = data.postMax || "";
+    document.getElementById("ht-objetivo").value = data.objetivo || "";
+    document.getElementById("ht-principaisAcoes").value = data.principaisAcoes || "";
+    document.getElementById("ht-obs").value = data.obs || "";
+    document.getElementById("ht-aptidoes").value = data.aptidoes || "";
+    document.getElementById("ht-modificadores").value = data.modificadores || "";
+    document.getElementById("ht-bonificacoes").value = data.bonificacoes || "";
+    document.getElementById("ht-tecnicas").value = data.tecnicas || "";
+
+    if (data.carregandoRawOverride !== undefined) htCarregandoRawOverride = data.carregandoRawOverride;
+    if (data.hHpPercent !== undefined) htHpPercentOverride = data.hHpPercent;
+    if (data.hEaPercent !== undefined) htEaPercentOverride = data.hEaPercent;
+    if (data.hSanPercent !== undefined) htSanPercentOverride = data.hSanPercent;
+    if (data.tHpPercent !== undefined) htHpTPercentOverride = data.tHpPercent;
+    if (data.tEaPercent !== undefined) htEaTPercentOverride = data.tEaPercent;
+    if (data.tSanPercent !== undefined) htSanTPercentOverride = data.tSanPercent;
+
+    if (data.selectedEquipment) htSelectedEquipment = data.selectedEquipment;
+    if (data.parsedItems && data.parsedItems.length > 0) renderEquipmentListHT(data.parsedItems);
+}
+
+function buildCarregandoTextHT() {
+    const items = [];
+    htParsedItems.forEach((item, index) => {
+        const sel = htSelectedEquipment[index];
+        if (!sel || !sel.selected) return;
+        const note = sel.note ? ` (${sel.note})` : "";
+        let html = `<div class="haruki-carry-item">`;
+        if (item.img && !item.img.includes("placeholder")) {
+            html += `<img src="${item.img}" class="haruki-carry-img">`;
+        }
+        html += `<div class="haruki-carry-info">`;
+        html += `<strong>${item.name}${note}</strong>`;
+        if (item.type) html += `<br>${item.type}`;
+        if (item.stats) html += `<br>${item.stats}`;
+        if (item.desc) html += `<br>${item.desc}`;
+        if (item.effect) html += `<br>Efeito: ${item.effect}`;
+        html += `</div></div>`;
+        items.push(html);
+    });
+    return items.join("\n");
+}
+
+function renderEquipmentListHT(items) {
+    htParsedItems = items;
+    const list = document.getElementById("ht-equipmentList");
+    list.innerHTML = "";
+
+    items.forEach((item, index) => {
+        const sel = htSelectedEquipment[index] || { selected: false, note: "" };
+        const card = document.createElement("div");
+        card.className = "eq-card" + (sel.selected ? " eq-selected" : "");
+
+        const hasImg = item.img && !item.img.includes("placeholder");
+        const imgHtml = hasImg ? `<img src="${item.img}" class="eq-img" alt="${item.name}">` : "";
+        const statsHtml = item.stats ? `<div class="eq-stats">${item.stats}</div>` : "";
+        const descHtml = item.desc ? `<div class="eq-desc">${item.desc}</div>` : "";
+        const effectHtml = item.effect ? `<div class="eq-effect">Efeito: ${item.effect}</div>` : "";
+
+        card.innerHTML = `
+            <label class="eq-check-label">
+                <input type="checkbox" class="eq-check" data-index="${index}" ${sel.selected ? "checked" : ""}>
+                <span class="eq-name">${item.name}</span>
+                ${item.type ? `<span class="eq-type">${item.type}</span>` : ""}
+            </label>
+            <div class="eq-body">
+                ${imgHtml}
+                <div class="eq-details">
+                    ${statsHtml}
+                    ${descHtml}
+                    ${effectHtml}
+                </div>
+            </div>
+            <input type="text" class="eq-note editor-input" data-index="${index}" placeholder="Ex: na mochila, empunhada..." value="${sel.note || ""}">
+        `;
+        list.appendChild(card);
+    });
+
+    list.querySelectorAll(".eq-check").forEach((cb) => {
+        cb.addEventListener("change", (e) => {
+            const idx = e.target.dataset.index;
+            if (!htSelectedEquipment[idx]) htSelectedEquipment[idx] = { selected: false, note: "" };
+            htSelectedEquipment[idx].selected = e.target.checked;
+            e.target.closest(".eq-card").classList.toggle("eq-selected", e.target.checked);
+            htStorageManager.scheduleSave(getFormDataHT());
+        });
+    });
+
+    list.querySelectorAll(".eq-note").forEach((input) => {
+        input.addEventListener("input", (e) => {
+            const idx = e.target.dataset.index;
+            if (!htSelectedEquipment[idx]) htSelectedEquipment[idx] = { selected: false, note: "" };
+            htSelectedEquipment[idx].note = e.target.value;
+            htStorageManager.scheduleSave(getFormDataHT());
+        });
+    });
+}
+
+// ============================================================================
 // Initialize Application
 // ============================================================================
 
@@ -932,7 +1211,7 @@ document.addEventListener("DOMContentLoaded", () => {
         .addEventListener("click", clearAllFields);
 
     // Auto-save on input changes
-    const formInputs = document.querySelectorAll(".editor-form .editor-input");
+    const formInputs = document.querySelectorAll("#editorForm .editor-input");
     formInputs.forEach((input) => {
         input.addEventListener("input", () => {
             storageManager.scheduleSave(getFormData());
@@ -991,5 +1270,176 @@ document.addEventListener("DOMContentLoaded", () => {
         renderEquipmentList(items);
         storageManager.scheduleSave(getFormData());
         showStatusMessage(`Loaded ${items.length} items`, "success");
+    });
+
+    // ============================================================================
+    // Tab switching
+    // ============================================================================
+    document.querySelectorAll(".tab-btn").forEach((btn) => {
+        btn.addEventListener("click", () => {
+            document.querySelectorAll(".tab-btn").forEach((b) => b.classList.remove("tab-active"));
+            document.querySelectorAll(".tab-panel").forEach((p) => p.classList.remove("tab-panel-active"));
+            btn.classList.add("tab-active");
+            document.getElementById(btn.dataset.tab).classList.add("tab-panel-active");
+        });
+    });
+
+    // ============================================================================
+    // HT Tab initialization
+    // ============================================================================
+    htStorageManager = new StorageManager("golden-age-ht-editor-state", "ht-autoSaveIndicator");
+    htmlGeneratorHT = new HTMLGeneratorHT();
+    const htTextWrapper = new TextWrapper("ht-narrative");
+
+    const savedDataHT = htStorageManager.load();
+    if (savedDataHT) {
+        setFormDataHT(savedDataHT);
+        showHTStatusMessage("Previous work loaded", "success");
+    }
+
+    // HT text wrap buttons
+    document.getElementById("ht-btnSpeech").addEventListener("click", () => {
+        const textarea = document.getElementById("ht-narrative");
+        const start = textarea.selectionStart;
+        const end = textarea.selectionEnd;
+        const selected = textarea.value.substring(start, end);
+        if (!selected.length) { showHTStatusMessage("Please select text first", "warning"); return; }
+        const wrapped = `<span class="haruki-speaks">${selected}</span>`;
+        textarea.value = textarea.value.substring(0, start) + wrapped + textarea.value.substring(end);
+        textarea.setSelectionRange(start + wrapped.length, start + wrapped.length);
+        textarea.focus();
+        htStorageManager.scheduleSave(getFormDataHT());
+    });
+
+    document.getElementById("ht-btnTakeruSpeech").addEventListener("click", () => {
+        const textarea = document.getElementById("ht-narrative");
+        const start = textarea.selectionStart;
+        const end = textarea.selectionEnd;
+        const selected = textarea.value.substring(start, end);
+        if (!selected.length) { showHTStatusMessage("Please select text first", "warning"); return; }
+        const wrapped = `<span class="takeru-speaks">${selected}</span>`;
+        textarea.value = textarea.value.substring(0, start) + wrapped + textarea.value.substring(end);
+        textarea.setSelectionRange(start + wrapped.length, start + wrapped.length);
+        textarea.focus();
+        htStorageManager.scheduleSave(getFormDataHT());
+    });
+
+    document.getElementById("ht-btnThought").addEventListener("click", () => {
+        htTextWrapper.wrapSelection("haruki-thinks");
+        htStorageManager.scheduleSave(getFormDataHT());
+    });
+
+    document.getElementById("ht-btnClearFormat").addEventListener("click", () => {
+        const textarea = document.getElementById("ht-narrative");
+        const original = textarea.value;
+        textarea.value = textarea.value
+            .replace(/<span class="haruki-speaks">(.*?)<\/span>/g, "$1")
+            .replace(/<span class="haruki-thinks">(.*?)<\/span>/g, "$1")
+            .replace(/<span class="takeru-speaks">(.*?)<\/span>/g, "$1");
+        if (original !== textarea.value) {
+            showHTStatusMessage("Formatting cleared", "success");
+            htStorageManager.scheduleSave(getFormDataHT());
+        } else {
+            showHTStatusMessage("No formatting to clear", "warning");
+        }
+    });
+
+    // HT Music
+    document.getElementById("ht-btnMusic").addEventListener("click", () => {
+        const label = document.getElementById("ht-musicLabel").value.trim();
+        const url = document.getElementById("ht-musicUrl").value.trim();
+        if (!label || !url) {
+            showHTStatusMessage("Please fill in both label and audio URL", "warning");
+            return;
+        }
+        const snippet = `<div class="music-player">${label} <audio controls controlsList="nodownload noplaybackrate nofullscreen noremoteplayback" src="${url}"></audio></div>`;
+        htTextWrapper.insertAtCursor(snippet);
+        document.getElementById("ht-musicLabel").value = "";
+        document.getElementById("ht-musicUrl").value = "";
+        showHTStatusMessage("Music player inserted", "success");
+        htStorageManager.scheduleSave(getFormDataHT());
+    });
+
+    // HT Generate & Copy
+    document.getElementById("ht-btnGenerate").addEventListener("click", () => {
+        const formData = getFormDataHT();
+        const errors = [];
+        if (!formData.title.trim()) errors.push("Title is required");
+        if (!formData.subtitle.trim()) errors.push("Subtitle is required");
+        if (formData.narrative.trim().length < 10) errors.push("Narrative must be at least 10 characters");
+        if (errors.length > 0) {
+            showHTStatusMessage("Validation errors: " + errors.join(", "), "error");
+            return;
+        }
+        const html = htmlGeneratorHT.generate(formData);
+        navigator.clipboard.writeText(html).then(() => {
+            showHTStatusMessage("HTML copied to clipboard!", "success");
+        }).catch(() => {
+            showHTStatusMessage("Failed to copy to clipboard", "error");
+        });
+    });
+
+    // HT Clear All
+    document.getElementById("ht-btnClear").addEventListener("click", () => {
+        if (confirm("Are you sure you want to clear all fields? This cannot be undone.")) {
+            document.getElementById("htEditorForm").reset();
+            htStorageManager.clear();
+            showHTStatusMessage("All fields cleared", "success");
+        }
+    });
+
+    // HT Auto-save on input changes
+    document.querySelectorAll("#htEditorForm .editor-input").forEach((input) => {
+        input.addEventListener("input", () => {
+            htStorageManager.scheduleSave(getFormDataHT());
+        });
+    });
+
+    // HT Import modal
+    const htImportModal = document.getElementById("ht-importModal");
+    const htImportCodeArea = document.getElementById("ht-importCodeArea");
+
+    document.getElementById("ht-btnImport").addEventListener("click", () => {
+        htImportCodeArea.value = "";
+        htImportModal.style.display = "flex";
+        htImportCodeArea.focus();
+    });
+
+    document.getElementById("ht-btnImportConfirm").addEventListener("click", () => {
+        const code = htImportCodeArea.value.trim();
+        if (!code) {
+            showHTStatusMessage("Please paste some code first", "warning");
+            return;
+        }
+        // Re-use the existing parser — the gojotwins-stats format is a superset
+        importGeneratedCode(code);
+        htImportModal.style.display = "none";
+        showHTStatusMessage("Code imported successfully!", "success");
+    });
+
+    document.getElementById("ht-btnImportCancel").addEventListener("click", () => {
+        htImportModal.style.display = "none";
+    });
+
+    htImportModal.addEventListener("click", (e) => {
+        if (e.target === htImportModal) htImportModal.style.display = "none";
+    });
+
+    // HT Parse inventory
+    document.getElementById("ht-btnParseHtml").addEventListener("click", () => {
+        const html = document.getElementById("ht-htmlPasteArea").value.trim();
+        if (!html) {
+            showHTStatusMessage("Paste your secundary.html code first", "warning");
+            return;
+        }
+        const items = parseSecundaryHTML(html);
+        if (items.length === 0) {
+            showHTStatusMessage("No items found in pasted HTML", "warning");
+            return;
+        }
+        htSelectedEquipment = {};
+        renderEquipmentListHT(items);
+        htStorageManager.scheduleSave(getFormDataHT());
+        showHTStatusMessage(`Loaded ${items.length} items`, "success");
     });
 });

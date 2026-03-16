@@ -591,3 +591,64 @@ body {
     margin: 0;
     padding: 0;
 }
+
+/* Tab Navigation */
+.tab-nav {
+    display: flex;
+    gap: 0;
+    padding: 24px 20px 0;
+}
+
+.tab-btn {
+    padding: 10px 24px;
+    background: rgba(13, 13, 13, 0.8);
+    border: 2px solid #371056;
+    border-bottom: none;
+    border-radius: 8px 8px 0 0;
+    color: rgba(188, 129, 233, 0.45);
+    font-family: 'Cinzel', serif;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: color 0.2s ease, background 0.2s ease;
+    margin-right: 4px;
+}
+
+.tab-btn:hover {
+    color: #bc81e9;
+    background: rgba(55, 16, 86, 0.35);
+}
+
+.tab-btn.tab-active {
+    color: #bc81e9;
+    background: radial-gradient(circle at 50% 50%, rgba(31, 10, 41, 1), rgba(13, 13, 13, 1));
+    border-color: #bc81e9;
+    position: relative;
+    z-index: 1;
+}
+
+/* Tab Panels */
+.tab-panel {
+    display: none;
+}
+
+.tab-panel.tab-panel-active {
+    display: block;
+}
+
+/* Character subtitle inside status section */
+.char-subtitle {
+    font-family: 'Cinzel', serif;
+    color: rgba(188, 129, 233, 0.7);
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin: 16px 0 10px 0;
+    font-weight: 600;
+}
+
+.char-subtitle:first-of-type {
+    margin-top: 4px;
+}
