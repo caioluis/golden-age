@@ -320,6 +320,11 @@
   line-height: 1.4;
 }
 
+.takeru-bag, .takeru-carry-item {
+  border-color: #561010;
+  background-color: #5610101a;
+}
+
 .haruki-carry-img {
   width: 60px;
   height: 60px;
